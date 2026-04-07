@@ -1,0 +1,5 @@
+.env
+node_modules
+public/asstes/plane video.mp4
+dist/
+*.mp4
