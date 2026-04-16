@@ -1,6 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
-import TopDestinations from '../components/topDestinations';
+import TopDestinations from '../components/TopDestinations';
 import WhyChooseUs from '../components/WhyChooseUs';
 import Accommodation from '../components/Accommodation';
 import Properties from '../components/Properties';
