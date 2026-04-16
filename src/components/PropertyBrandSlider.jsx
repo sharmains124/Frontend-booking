@@ -6,10 +6,9 @@ const PropertyBrandSlider = () => {
     {
       id: 1,
       name: "ALL ACCOR",
-      logo: "https://logos-world.net/wp-content/uploads/2021/08/Accor-Logo.png", // Alternative to text logo
       title: "Discover Hotels",
       subtitle: "Visit Flagship Store",
-      img: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800",
+      img: "https://images.unsplash.com/photo-1551882547-ff40c0d517af?auto=format&fit=crop&q=80&w=800",
       bgColor: "bg-[#001746]",
       logoType: "accor"
     },
@@ -17,8 +16,8 @@ const PropertyBrandSlider = () => {
       id: 2,
       name: "CLERMONT HOTEL GROUP",
       title: "Amazing hotels, Unforgettable city.",
-      subtitle: "",
-      img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800",
+      subtitle: "City Escapes",
+      img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800",
       bgColor: "bg-[#2d4d63]",
       logoType: "clermont"
     },
@@ -27,7 +26,7 @@ const PropertyBrandSlider = () => {
       name: "ROYAL ORCHID",
       title: "Your Stay, Your Way",
       subtitle: "Across Every Budget",
-      img: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=800",
+      img: "https://images.unsplash.com/photo-1542314831-29177bd83a06?auto=format&fit=crop&q=80&w=800",
       bgColor: "bg-[#6d2170]",
       logoType: "royal"
     },
@@ -36,8 +35,8 @@ const PropertyBrandSlider = () => {
       name: "MARRIOTT BONVOY",
       title: "Travel with Passion",
       subtitle: "Infinite Destinations",
-      img: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?q=80&w=800",
-      bgColor: "bg-[#000000]",
+      img: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800",
+      bgColor: "bg-[#111111]",
       logoType: "marriott"
     },
     {
@@ -45,7 +44,7 @@ const PropertyBrandSlider = () => {
       name: "HILTON HONORS",
       title: "Expect the Best",
       subtitle: "Luxury Redefined",
-      img: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800",
+      img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=800",
       bgColor: "bg-[#002855]",
       logoType: "hilton"
     }
@@ -68,7 +67,7 @@ const PropertyBrandSlider = () => {
   const next = () => setCurrentIndex((i) => (i >= maxIndex ? 0 : i + 1));
 
   const renderLogo = (type) => {
-    switch(type) {
+    switch (type) {
       case 'accor':
         return (
           <div className="flex flex-col items-center">
@@ -105,13 +104,13 @@ const PropertyBrandSlider = () => {
   };
 
   return (
-    <div 
+    <div
       className="relative group px-1"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Navigation Arrows */}
-      <button 
+      <button
         onClick={prev}
         className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-xl border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover:opacity-100"
       >
@@ -119,28 +118,29 @@ const PropertyBrandSlider = () => {
       </button>
 
       <div className="overflow-hidden rounded-3xl">
-        <div 
+        <div
           className="flex transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentIndex * (100 / slidesPerView)}%)` }}
         >
           {brands.map((brand) => (
-            <div 
-              key={brand.id} 
+            <div
+              key={brand.id}
               className="flex-shrink-0 px-2"
               style={{ width: `${100 / slidesPerView}%` }}
             >
               <div className="h-[12.5rem] rounded-3xl overflow-hidden flex shadow-md group cursor-pointer border border-gray-100 hover:shadow-xl transition-all">
                 {/* Left Side: Image */}
                 <div className="w-[42%] h-full relative overflow-hidden">
-                  <img 
-                    src={brand.img} 
-                    alt={brand.name} 
+                  <img
+                    src={brand.img}
+                    alt={brand.name}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                   />
                   {/* Flagship Store Badge */}
                   <div className="absolute top-3 left-3 bg-[#e8f1e9] pl-1 pr-3 py-1 rounded-lg shadow-sm border border-white/50 flex items-center gap-1.5 min-w-[80px]">
                     <div className="w-6 h-6 rounded-md bg-[#001746] flex items-center justify-center text-[10px] text-white">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" /></svg>
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[7px] font-black text-[#001746] leading-none">Flagship</span>
@@ -153,7 +153,7 @@ const PropertyBrandSlider = () => {
                 <div className={`${brand.bgColor} flex-grow h-full p-4 flex flex-col items-center justify-center text-white relative z-10 overflow-hidden`}>
                   {/* Decorative Curve divider */}
                   <div className={`absolute top-0 -left-10 w-20 h-full ${brand.bgColor} rounded-l-[4rem] group-hover:-left-12 transition-all duration-700`}></div>
-                  
+
                   <div className="relative z-20 flex flex-col items-center w-full px-4">
                     <div className="mb-4 transform group-hover:scale-105 transition-transform duration-500">
                       {renderLogo(brand.logoType)}
@@ -171,7 +171,7 @@ const PropertyBrandSlider = () => {
         </div>
       </div>
 
-      <button 
+      <button
         onClick={next}
         className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-xl border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-all opacity-0 group-hover:opacity-100"
       >
@@ -181,7 +181,7 @@ const PropertyBrandSlider = () => {
       {/* Dots */}
       <div className="flex justify-center gap-1.5 mt-6">
         {Array.from({ length: maxIndex + 1 }).map((_, i) => (
-          <button 
+          <button
             key={i}
             onClick={() => setCurrentIndex(i)}
             className={`h-1.5 rounded-full transition-all duration-300 ${i === currentIndex ? 'w-8 bg-blue-600' : 'w-1.5 bg-gray-300'}`}

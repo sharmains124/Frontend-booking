@@ -8,7 +8,7 @@ const Hero = ({
   isFlight = false
 }) => {
   return (
-    <section className="relative min-h-[85vh] md:min-h-[800px] flex items-center justify-center pt-20 pb-8">
+    <section className="relative min-h-[60vh] md:min-h-[600px] flex items-center justify-center pt-32 pb-20">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0 select-none overflow-hidden">
         {/* Overlays for better contrast and premium feel */}
@@ -50,9 +50,9 @@ const Hero = ({
         )}
       </div>
 
-      <div className="container-custom relative z-20 text-center px-6 mt-4">
-        <div className="mb-2 md:mb-4 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-6xl lg:text-[85px] font-black text-white leading-[1.1] tracking-tight mb-4 drop-shadow-2xl animate-fade-in-up delay-100">
+      <div className="container-custom relative z-20 text-center px-6 mt-0">
+        <div className="mb-1 md:mb-2 max-w-5xl mx-auto">
+          <h1 className="text-4xl md:text-6xl lg:text-[75px] font-black text-white leading-tight tracking-tight mb-4 drop-shadow-2xl animate-fade-in-up delay-100">
             {isFlight ? (
               <>
                 Your <br className="md:hidden" />
@@ -66,7 +66,7 @@ const Hero = ({
             )}
           </h1>
           
-          <p className="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto font-medium tracking-wide mb-6 drop-shadow-lg leading-relaxed animate-fade-in-up delay-200">
+          <p className="text-sm md:text-base lg:text-lg text-white/90 max-w-2xl mx-auto font-medium tracking-wide mb-8 drop-shadow-lg leading-relaxed animate-fade-in-up delay-200">
             {isFlight ? (
               <>
                 Precision-crafted travel experiences, engineered with discretion, <br className="hidden md:block" />
@@ -79,7 +79,7 @@ const Hero = ({
         </div>
 
         {/* Search Engine Integration */}
-        <div className="max-w-6xl mx-auto relative z-30 animate-fade-in-up delay-300">
+        <div className="max-w-6xl mx-auto relative z-30 animate-fade-in-up delay-300 transform translate-y-4 pb-12">
           <SearchForm />
         </div>
       </div>

@@ -11,7 +11,7 @@ import {
   X,
   Check
 } from 'lucide-react';
-import DateRangePicker from '../../../components/DateRangePicker';
+
 import GuestClassSelector from '../../../components/GuestClassSelector';
 
 const CITY_DATA = {
@@ -239,12 +239,40 @@ const FlightResultsHeader = ({ origin, destination, date, passengers, travelClas
               )}
 
               {activeDropdown === 'calendar' && (
-                <div className="absolute left-[500px] shadow-[0_20px_100px_rgba(0,0,0,0.35)] rounded-xl overflow-hidden border border-gray-100">
-                  <DateRangePicker 
-                    checkIn={dates.checkIn} 
-                    checkOut={dates.checkOut} 
-                    onChange={(d) => { setDates(d); if(d.checkOut) setActiveDropdown(null); }}
-                  />
+                <div className="absolute left-[500px] bg-white shadow-[0_20px_100px_rgba(0,0,0,0.35)] rounded-xl overflow-hidden border border-gray-100 p-5 flex flex-col gap-4 min-w-[280px]">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Depart Date</label>
+                    <input
+                      type="date"
+                      value={dates.checkIn ? dates.checkIn.toISOString().split('T')[0] : ''}
+                      min={new Date().toISOString().split('T')[0]}
+                      onChange={e => {
+                        const d = e.target.value ? new Date(e.target.value) : null;
+                        setDates(prev => ({ ...prev, checkIn: d }));
+                      }}
+                      className="border-2 border-gray-200 focus:border-blue-500 rounded-lg px-3 py-2 text-sm font-black text-gray-900 outline-none cursor-pointer"
+                    />
+                  </div>
+                  {tripType === 'roundTrip' && (
+                    <div className="flex flex-col gap-1">
+                      <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Return Date</label>
+                      <input
+                        type="date"
+                        value={dates.checkOut ? dates.checkOut.toISOString().split('T')[0] : ''}
+                        min={dates.checkIn ? dates.checkIn.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                        onChange={e => {
+                          const d = e.target.value ? new Date(e.target.value) : null;
+                          setDates(prev => ({ ...prev, checkOut: d }));
+                          if (d) setActiveDropdown(null);
+                        }}
+                        className="border-2 border-gray-200 focus:border-blue-500 rounded-lg px-3 py-2 text-sm font-black text-gray-900 outline-none cursor-pointer"
+                      />
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setActiveDropdown(null)}
+                    className="w-full py-2 bg-blue-600 text-white rounded-lg text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all"
+                  >Done</button>
                 </div>
               )}
 

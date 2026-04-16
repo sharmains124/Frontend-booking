@@ -1,6 +1,6 @@
 import React from 'react';
 import Hero from '../components/Hero';
-import FeaturedDestinations from '../components/FeaturedDestinations';
+import TopDestinations from '../components/topDestinations';
 import WhyChooseUs from '../components/WhyChooseUs';
 import Accommodation from '../components/Accommodation';
 import Properties from '../components/Properties';
@@ -12,8 +12,8 @@ const HomePage = () => {
       <Hero />
       
       <main className="w-full mt-4 space-y-6">
-        {/* Destinations Grid */}
-        <FeaturedDestinations />
+        {/* Top Destinations */}
+        <TopDestinations />
 
         {/* Existing sections */}
         <div className="max-w-7xl mx-auto px-4 w-full space-y-12">
@@ -21,11 +21,10 @@ const HomePage = () => {
           <FlightActive />
           <Properties />
         </div>
-
-
       </main>
     </div>
   );
 };
 
 export default HomePage;
+

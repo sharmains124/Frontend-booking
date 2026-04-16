@@ -14,7 +14,7 @@ import {
   Check,
   Search
 } from 'lucide-react';
-import DateRangePicker from './DateRangePicker';
+
 import GuestClassSelector from './GuestClassSelector';
 import HotelGuestSelector from './HotelGuestSelector';
 import { toast } from 'react-hot-toast';
@@ -129,8 +129,8 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
   // ── MMT Style Hotels Helpers ─────────────────────────────────────────
 
   const renderHotelSubHeader = () => (
-    <div className="flex items-center justify-between mb-3 px-2">
-      <div className="flex items-center gap-6">
+    <div className="flex items-center justify-between mb-2 px-2">
+      <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 cursor-pointer group">
           <div className="relative flex items-center justify-center">
             <input 
@@ -138,10 +138,10 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
               name="hotelOption" 
               checked={hotelOption === 'upto4'}
               onChange={() => setHotelOption('upto4')}
-              className="appearance-none w-5 h-5 rounded-full border-2 border-gray-300 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+              className="appearance-none w-4 h-4 rounded-full border-2 border-gray-300 checked:bg-primary checked:border-primary transition-all cursor-pointer"
             />
           </div>
-          <span className={`text-[13px] font-black transition-colors ${hotelOption === 'upto4' ? 'text-text-main' : 'text-text-muted group-hover:text-text-main'}`}>
+          <span className={`text-[12px] font-black transition-colors ${hotelOption === 'upto4' ? 'text-text-main' : 'text-text-muted group-hover:text-text-main'}`}>
             Upto 4 Rooms
           </span>
         </label>
@@ -153,20 +153,20 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
               name="hotelOption" 
               checked={hotelOption === 'group'}
               onChange={() => setHotelOption('group')}
-              className="appearance-none w-5 h-5 rounded-full border-2 border-gray-300 checked:bg-primary checked:border-primary transition-all cursor-pointer"
+              className="appearance-none w-4 h-4 rounded-full border-2 border-gray-300 checked:bg-primary checked:border-primary transition-all cursor-pointer"
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-[13px] font-black transition-colors ${hotelOption === 'group' ? 'text-text-main' : 'text-text-muted group-hover:text-text-main'}`}>
+            <span className={`text-[12px] font-black transition-colors ${hotelOption === 'group' ? 'text-text-main' : 'text-text-muted group-hover:text-text-main'}`}>
               Group Deals
             </span>
-            <span className="bg-accent text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm animate-pulse">new</span>
+            <span className="bg-accent text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter shadow-sm">new</span>
           </div>
         </label>
       </div>
 
-      <p className="hidden md:block text-[12px] font-medium text-text-muted">
-        Book Domestic and International Property Online. To list your property <span className="text-primary font-black cursor-pointer hover:underline">Click Here</span>
+      <p className="hidden md:block text-[11px] font-medium text-text-muted">
+        Book Domestic and International Property Online.
       </p>
     </div>
   );
@@ -188,22 +188,22 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
 
   return (
     <div className="w-full max-w-6xl mx-auto relative z-[100] font-sans">
-      <div className="bg-white rounded-[2.5rem] shadow-premium overflow-visible border border-white/20">
+      <div className="bg-white rounded-[20px] shadow-[0_15px_60px_-15px_rgba(0,0,0,0.15)] relative border border-gray-100 animate-fade-in-up">
         
         {/* ── Tabs Bar ─────────────────────────────────────────── */}
-        <div className="flex border-b border-gray-100 ">
+        <div className="flex px-8 border-b border-gray-100">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.name;
             return (
               <button
                 key={tab.name}
                 onClick={() => setActiveTab(tab.name)}
-                className={`flex items-center gap-3 px-6 ${activeTab === 'Hotels' ? 'py-3' : 'py-4'} text-[13px] font-black tracking-wide uppercase transition-all relative
-                  ${isActive ? 'text-primary' : 'text-text-muted hover:text-text-main'}`}
+                className={`flex items-center gap-3 px-6 py-4 text-[13px] font-black tracking-widest uppercase transition-all relative
+                  ${isActive ? 'text-primary' : 'text-gray-400 hover:text-text-main'}`}
               >
                 {tab.name}
                 {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-primary rounded-t-full shadow-[0_-2px_15px_rgba(124,58,237,0.4)]" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-t-full shadow-[0_-2px_10px_rgba(124,58,237,0.3)]" />
                 )}
               </button>
             );
@@ -211,78 +211,75 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
         </div>
 
         {/* ── Main Search Form ────────────────────────────────── */}
-        <div className={activeTab === 'Hotels' ? 'p-3 md:p-4' : 'p-4 md:p-6'}>
+        <div className={activeTab === 'Hotels' ? 'p-2 md:p-3' : 'p-3 md:p-4'}>
           {/* Layout Switcher */}
           {activeTab === 'Hotels' ? (
             <>
               {renderHotelSubHeader()}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-white border border-gray-100 rounded-2xl overflow-visible relative shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-white border border-gray-200 rounded-2xl overflow-visible relative shadow-sm">
                 {/* Hotel Location Box */}
                 <div 
-                  className="lg:col-span-5 p-4 cursor-pointer transition-all hover:bg-gray-50 relative border-r border-gray-100 min-h-[72px] flex flex-col justify-center rounded-l-2xl"
+                  className="lg:col-span-5 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 relative border-r border-gray-100 min-h-[110px] flex flex-col justify-center rounded-l-2xl"
                   onClick={() => { setActiveDropdown('from'); setShowCalendar(false); setShowGuests(false); }}
                 >
-                  <div className="flex items-center gap-1 mb-1">
-                     <p className="text-[12px] font-black text-text-light uppercase tracking-widest">City, Property Name Or Location</p>
-                  </div>
-                  <h3 className="text-2xl font-black text-text-main leading-tight tracking-tight">{searchData.from.city}</h3>
-                  <p className="text-[12px] font-bold text-text-muted truncate mt-1">
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">City / Hotel / Area</p>
+                  <h3 className="text-2xl font-black text-text-main leading-none truncate">{searchData.from.city}</h3>
+                  <p className="text-[12px] font-bold text-gray-500 truncate mt-1">
                     {searchData.from.airport.split(',').pop().trim() || 'India'}
                   </p>
                 </div>
 
                 {/* Check-In */}
                 <div 
-                  className={`lg:col-span-2 p-4 cursor-pointer transition-all hover:bg-gray-50 border-r border-gray-100 min-h-[72px] flex flex-col justify-center ${showCalendar ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-2 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 border-r border-gray-100 min-h-[110px] flex flex-col justify-center ${showCalendar ? 'bg-primary/5' : ''}`}
                   onClick={() => { setShowCalendar(!showCalendar); setActiveDropdown(null); setShowGuests(false); }}
                 >
-                  <p className="text-[12px] font-black text-text-light uppercase tracking-widest mb-1">Check-In</p>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Check-In</p>
                   <div className="flex items-baseline gap-1">
-                    <h3 className="text-xl font-black text-text-main leading-tight">{dates.checkIn?.getDate()}</h3>
-                    <span className="text-sm font-black text-text-main">{dates.checkIn?.toLocaleString('default', { month: 'short' })}' {dates.checkIn?.getFullYear().toString().substring(2)}</span>
+                    <h3 className="text-2xl font-black text-text-main leading-none">{dates.checkIn?.getDate()}</h3>
+                    <span className="text-base font-black text-text-main">{dates.checkIn?.toLocaleString('default', { month: 'short' })}'{dates.checkIn?.getFullYear().toString().substring(2)}</span>
                   </div>
-                  <p className="text-[12px] font-bold text-text-muted mt-1 uppercase tracking-tighter">
+                  <p className="text-[12px] font-bold text-gray-500 mt-1 uppercase">
                     {dates.checkIn?.toLocaleString('default', { weekday: 'long' })}
                   </p>
                 </div>
 
                 {/* Check-Out */}
                 <div 
-                  className={`lg:col-span-2 p-4 cursor-pointer transition-all hover:bg-gray-50 border-r border-gray-100 min-h-[72px] flex flex-col justify-center ${showCalendar ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-2 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 border-r border-gray-100 min-h-[110px] flex flex-col justify-center ${showCalendar ? 'bg-primary/5' : ''}`}
                   onClick={() => { setShowCalendar(!showCalendar); setActiveDropdown(null); setShowGuests(false); }}
                 >
-                  <p className="text-[12px] font-black text-text-light uppercase tracking-widest mb-1">Check-Out</p>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Check-Out</p>
                   <div className="flex items-baseline gap-1">
-                    <h3 className="text-xl font-black text-text-main leading-tight">{dates.checkOut?.getDate() || (new Date(dates.checkIn.getTime() + 86400000)).getDate()}</h3>
-                    <span className="text-sm font-black text-text-main">{dates.checkOut?.toLocaleString('default', { month: 'short' }) || (new Date(dates.checkIn.getTime() + 86400000)).toLocaleString('default', { month: 'short' })}' {dates.checkIn?.getFullYear().toString().substring(2)}</span>
+                    <h3 className="text-2xl font-black text-text-main leading-none">{dates.checkOut?.getDate() || (new Date(dates.checkIn.getTime() + 86400000)).getDate()}</h3>
+                    <span className="text-base font-black text-text-main">{dates.checkOut?.toLocaleString('default', { month: 'short' }) || (new Date(dates.checkIn.getTime() + 86400000)).toLocaleString('default', { month: 'short' })}'{dates.checkIn?.getFullYear().toString().substring(2)}</span>
                   </div>
-                  <p className="text-[12px] font-bold text-text-muted mt-1 uppercase tracking-tighter">
+                  <p className="text-[12px] font-bold text-gray-500 mt-1 uppercase">
                     {dates.checkOut?.toLocaleString('default', { weekday: 'long' }) || (new Date(dates.checkIn.getTime() + 86400000)).toLocaleString('default', { weekday: 'long' })}
                   </p>
                 </div>
 
                 {/* Rooms & Guests */}
                 <div 
-                  className={`lg:col-span-3 p-4 cursor-pointer transition-all hover:bg-gray-50 min-h-[72px] flex flex-col justify-center rounded-r-2xl ${showGuests ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-3 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 min-h-[110px] flex flex-col justify-center rounded-r-2xl ${showGuests ? 'bg-primary/5' : ''}`}
                   onClick={() => { setShowGuests(!showGuests); setShowCalendar(false); setActiveDropdown(null); }}
                 >
-                  <p className="text-[12px] font-black text-text-light uppercase tracking-widest mb-1">Rooms & Guests</p>
-                  <div className="flex items-baseline gap-2">
-                    <h3 className="text-xl font-black text-text-main leading-tight">
-                      {guestData.rooms} <span className="text-lg text-text-muted">Rooms</span> {guestData.adults} <span className="text-lg text-text-muted">Adults</span>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Rooms & Guests</p>
+                  <div className="flex items-baseline gap-1">
+                    <h3 className="text-2xl font-black text-text-main leading-none">
+                      {guestData.rooms} <span className="text-sm text-gray-500">R</span> {guestData.adults} <span className="text-sm text-gray-500">A</span>
                     </h3>
                   </div>
-                  <p className="text-[12px] font-bold text-text-muted mt-1 uppercase tracking-tighter">
-                    {guestData.children > 0 ? `${guestData.children} Children` : 'Click to select'}
+                  <p className="text-[12px] font-bold text-gray-500 mt-1 truncate">
+                    {guestData.children > 0 ? `${guestData.children} Children` : 'Select Guest Info'}
                   </p>
                 </div>
               </div>
-              {renderTrendingSearches()}
             </>
           ) : (
-            <>
-              {/* Trip Type Selection Bar */}
-              <div className="flex gap-8 mb-4 px-2">
+            <div className="relative">
+              {/* Trip Type Selection Bar - MMT Style */}
+              <div className="flex gap-8 mb-4 px-6">
                 {[
                   { id: 'oneWay', label: 'One Way' },
                   { id: 'roundTrip', label: 'Round Trip' },
@@ -298,27 +295,27 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
                           setTripType(type.id);
                           if (type.id === 'roundTrip') setShowCalendar(true);
                         }}
-                        className="appearance-none w-4 h-4 rounded-full border-2 border-gray-300 checked:border-primary transition-all cursor-pointer"
+                        className="appearance-none w-5 h-5 rounded-full border-2 border-gray-300 checked:border-primary transition-all cursor-pointer"
                       />
-                      {tripType === type.id && <div className="absolute w-2 h-2 bg-primary rounded-full" />}
+                      {tripType === type.id && <div className="absolute w-2.5 h-2.5 bg-primary rounded-full" />}
                     </div>
-                    <span className={`text-[13px] font-black transition-colors ${tripType === type.id ? 'text-text-main' : 'text-text-muted group-hover:text-text-main'}`}>
+                    <span className={`text-[13px] font-black transition-colors ${tripType === type.id ? 'text-text-main' : 'text-gray-400 group-hover:text-text-main'}`}>
                       {type.label}
                     </span>
                   </label>
                 ))}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-white border border-gray-100 rounded-2xl overflow-visible relative shadow-sm">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch bg-white border border-gray-200 rounded-2xl overflow-visible relative shadow-sm">
                 
                 {/* From City Selection */}
                 <div 
-                  className={`lg:col-span-3 p-4 cursor-pointer transition-all hover:bg-gray-50 relative border-r border-gray-100 min-h-[75px] flex flex-col justify-center rounded-l-2xl ${activeDropdown === 'from' ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-3 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 relative border-r border-gray-100 min-h-[110px] flex flex-col justify-center rounded-l-2xl ${activeDropdown === 'from' ? 'bg-primary/5' : ''}`}
                   onClick={() => { setActiveDropdown('from'); setShowCalendar(false); setShowGuests(false); }}
                 >
-                  <p className="text-[11px] font-black text-text-light uppercase tracking-widest mb-1">From</p>
-                  <h3 className="text-xl font-black text-text-main leading-tight tracking-tight">{searchData.from.city}</h3>
-                  <p className="text-[11px] font-bold text-text-muted truncate mt-0.5">
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">From</p>
+                  <h3 className="text-2xl font-black text-text-main leading-none truncate tracking-tight">{searchData.from.city}</h3>
+                  <p className="text-[12px] font-bold text-gray-500 truncate mt-1">
                     {searchData.from.code}, {searchData.from.airport.split(',')[0]}
                   </p>
                 </div>
@@ -334,83 +331,83 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
                     className="w-10 h-10 bg-white border border-gray-100 rounded-full shadow-premium flex items-center justify-center text-primary hover:text-white hover:bg-primary transition-all duration-500 hover:scale-110 active:scale-95"
                     style={{ transform: `rotate(${swapRotation}deg)` }}
                   >
-                    <ArrowLeftRight size={18} strokeWidth={3} />
+                    <ArrowLeftRight size={16} strokeWidth={3} />
                   </button>
                 </div>
 
                 {/* To City Selection */}
                 <div 
-                  className={`lg:col-span-3 p-4 cursor-pointer transition-all hover:bg-gray-50 relative border-r border-gray-100 min-h-[75px] flex flex-col justify-center ${activeDropdown === 'to' ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-3 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 relative border-r border-gray-100 min-h-[110px] flex flex-col justify-center ${activeDropdown === 'to' ? 'bg-primary/5' : ''}`}
                   onClick={() => { setActiveDropdown('to'); setShowCalendar(false); setShowGuests(false); }}
                 >
-                  <p className="text-[11px] font-black text-text-light uppercase tracking-widest mb-1">To</p>
-                  <h3 className="text-xl font-black text-text-main leading-tight tracking-tight">{searchData.to.city}</h3>
-                  <p className="text-[11px] font-bold text-text-muted truncate mt-0.5">
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">To</p>
+                  <h3 className="text-2xl font-black text-text-main leading-none truncate tracking-tight">{searchData.to.city}</h3>
+                  <p className="text-[12px] font-bold text-gray-500 truncate mt-1">
                     {searchData.to.code}, {searchData.to.airport.split(',')[0]}
                   </p>
                 </div>
 
                 {/* Departure Date Selection */}
                 <div 
-                  className={`lg:col-span-2 p-4 cursor-pointer transition-all hover:bg-gray-50 border-r border-gray-100 min-h-[75px] flex flex-col justify-center ${showCalendar ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-2 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 border-r border-gray-100 min-h-[110px] flex flex-col justify-center ${showCalendar ? 'bg-primary/5' : ''}`}
                   ref={departureRef}
                   onClick={() => { setShowCalendar(!showCalendar); setActiveDropdown(null); setShowGuests(false); }}
                 >
-                  <p className="text-[11px] font-black text-text-light uppercase tracking-widest mb-1">Departure</p>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Departure</p>
                   <div className="flex items-baseline gap-1">
-                    <h3 className="text-xl font-black text-text-main leading-tight">{dates.checkIn?.getDate()}</h3>
-                    <span className="text-sm font-black text-text-main">{dates.checkIn?.toLocaleString('default', { month: 'short' })}' {dates.checkIn?.getFullYear().toString().substring(2)}</span>
+                    <h3 className="text-2xl font-black text-text-main leading-none">{dates.checkIn?.getDate()}</h3>
+                    <span className="text-base font-black text-text-main">{dates.checkIn?.toLocaleString('default', { month: 'short' })}'{dates.checkIn?.getFullYear().toString().substring(2)}</span>
                   </div>
-                  <p className="text-[11px] font-bold text-text-muted mt-0.5">
+                  <p className="text-[12px] font-bold text-gray-500 mt-1 uppercase">
                     {dates.checkIn?.toLocaleString('default', { weekday: 'long' })}
                   </p>
                 </div>
 
                 {/* Return Date Selection */}
                 <div 
-                  className={`lg:col-span-2 p-4 transition-all hover:bg-gray-50 border-r border-gray-100 last:border-0 cursor-pointer min-h-[75px] flex flex-col justify-center ${tripType === 'oneWay' ? 'bg-gray-50/30' : ''}`}
+                  className={`lg:col-span-2 p-6 md:p-8 transition-all hover:bg-gray-50/50 border-r border-gray-100 last:border-0 cursor-pointer min-h-[110px] flex flex-col justify-center ${tripType === 'oneWay' ? 'bg-gray-50/10' : ''}`}
                   onClick={() => { setTripType('roundTrip'); setShowCalendar(true); setActiveDropdown(null); setShowGuests(false); }}
                 >
-                  <p className="text-[11px] font-black text-text-light uppercase tracking-widest mb-1">Return</p>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Return</p>
                   {tripType === 'oneWay' ? (
-                    <p className="text-[11px] font-bold text-gray-400 mt-1 leading-tight">Tap for return date</p>
+                    <p className="text-[12px] font-bold text-gray-300 mt-1 leading-tight">Tap for return</p>
                   ) : (
                     <>
                       <div className="flex items-baseline gap-1">
-                        <h3 className="text-xl font-black text-text-main leading-tight">{dates.checkOut?.getDate() || '--'}</h3>
-                        <span className="text-sm font-black text-text-main">{dates.checkOut?.toLocaleString('default', { month: 'short' }) || ''}</span>
+                        <h3 className="text-2xl font-black text-text-main leading-none">{dates.checkOut?.getDate() || '--'}</h3>
+                        <span className="text-base font-black text-text-main">{dates.checkOut?.toLocaleString('default', { month: 'short' }) || ''}</span>
                       </div>
-                      <p className="text-[11px] font-bold text-text-muted mt-0.5"> {dates.checkOut?.toLocaleString('default', { weekday: 'long' }) || 'Select Date'}</p>
+                      <p className="text-[12px] font-bold text-gray-500 mt-1"> {dates.checkOut?.toLocaleString('default', { weekday: 'long' }) || 'Select Date'}</p>
                     </>
                   )}
                 </div>
 
                 {/* Travellers Selection */}
                 <div 
-                  className={`lg:col-span-2 p-4 cursor-pointer transition-all hover:bg-gray-50 border-r border-gray-100 last:border-0 min-h-[75px] flex flex-col justify-center rounded-r-2xl ${showGuests ? 'bg-blue-50/30' : ''}`}
+                  className={`lg:col-span-2 p-6 md:p-8 cursor-pointer transition-all hover:bg-gray-50/50 border-r border-gray-100 last:border-0 min-h-[110px] flex flex-col justify-center rounded-r-2xl ${showGuests ? 'bg-primary/5' : ''}`}
                   ref={guestsRef}
                   onClick={() => { setShowGuests(!showGuests); setShowCalendar(false); setActiveDropdown(null); }}
                 >
-                  <p className="text-[11px] font-black text-text-light uppercase tracking-widest mb-1">Travellers & Class</p>
+                  <p className="text-[12px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1">Travellers</p>
                   <div className="flex items-baseline gap-1">
-                    <h3 className="text-xl font-black text-text-main leading-tight">{guestData.adults + guestData.children}</h3>
-                    <span className="text-sm font-black text-text-main">Travellers</span>
+                    <h3 className="text-2xl font-black text-text-main leading-none">{guestData.adults + guestData.children}</h3>
+                    <span className="text-sm font-black text-text-main ml-1">Guests</span>
                   </div>
-                  <p className="text-[11px] font-bold text-text-muted truncate mt-0.5">
+                  <p className="text-[12px] font-bold text-gray-500 truncate mt-1">
                     {guestData.cabinClass}
                   </p>
                 </div>
               </div>
-            </>
+            </div>
           )}
 
-          {/* Large Search Button */}
-          <div className="flex justify-center -mb-16 mt-4 relative z-10">
+          {/* Overlapping Absolute Search Button - MMT Signature Style */}
+          <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-[100]">
             <button 
-               onClick={handleSearch}
-               className={`${activeTab === 'Hotels' ? 'btn-mmt-blue' : 'btn-search-gradient'} text-white px-16 py-4 rounded-full flex items-center justify-center gap-4 font-black text-[16px] uppercase tracking-[0.2em] shadow-2xl active:scale-95 hover:scale-105 transition-all group`}
-             >
-                <span className="text-center">{activeTab === 'Hotels' ? 'SEARCH' : `Search ${activeTab}`}</span>
+              onClick={handleSearch}
+              className="bg-gradient-to-r from-[#53b2fe] to-[#065af3] text-white px-16 py-4 rounded-full flex items-center justify-center font-black text-[18px] md:text-[24px] uppercase tracking-[0.1em] shadow-[0_10px_35px_rgba(6,90,243,0.4)] active:scale-95 hover:scale-105 transition-all group"
+            >
+              SEARCH
             </button>
           </div>
         </div>
@@ -503,12 +500,40 @@ const SearchForm = ({ initialTab = 'Flights' }) => {
         )}
 
         {showCalendar && (
-          <div className="absolute top-[98%] left-[40%] -translate-x-1/2 z-[1010] animate-fade-in shadow-[0_30px_120px_rgba(0,0,0,0.45)] rounded-2xl overflow-hidden border border-gray-100">
-            <DateRangePicker 
-              checkIn={dates.checkIn} 
-              checkOut={dates.checkOut} 
-              onChange={(d) => { setDates(d); if(d.checkOut) setShowCalendar(false); }}
-            />
+          <div className="absolute top-[98%] left-[40%] -translate-x-1/2 z-[1010] animate-fade-in bg-white shadow-[0_30px_120px_rgba(0,0,0,0.45)] rounded-2xl overflow-hidden border border-gray-100 p-6 flex flex-col gap-5 min-w-[340px]">
+            <div className="flex flex-col gap-1">
+              <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest">Departure Date</label>
+              <input
+                type="date"
+                value={dates.checkIn ? dates.checkIn.toISOString().split('T')[0] : ''}
+                min={new Date().toISOString().split('T')[0]}
+                onChange={e => {
+                  const d = e.target.value ? new Date(e.target.value) : null;
+                  setDates(prev => ({ ...prev, checkIn: d }));
+                }}
+                className="border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-2.5 text-sm font-black text-gray-900 outline-none cursor-pointer"
+              />
+            </div>
+            {tripType === 'roundTrip' && (
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest">Return Date</label>
+                <input
+                  type="date"
+                  value={dates.checkOut ? dates.checkOut.toISOString().split('T')[0] : ''}
+                  min={dates.checkIn ? dates.checkIn.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                  onChange={e => {
+                    const d = e.target.value ? new Date(e.target.value) : null;
+                    setDates(prev => ({ ...prev, checkOut: d }));
+                    if (d) setShowCalendar(false);
+                  }}
+                  className="border-2 border-gray-200 focus:border-primary rounded-xl px-4 py-2.5 text-sm font-black text-gray-900 outline-none cursor-pointer"
+                />
+              </div>
+            )}
+            <button
+              onClick={() => setShowCalendar(false)}
+              className="w-full py-2.5 bg-primary text-white rounded-xl text-[12px] font-black uppercase tracking-widest hover:bg-primary/90 transition-all"
+            >Done</button>
           </div>
         )}
 

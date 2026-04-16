@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  Check, ChevronLeft, MapPin, Calendar, Users, 
-  ShieldCheck, Info, User, Mail, Phone, CreditCard,
-  Building2, ArrowRight, Loader2
-} from 'lucide-react';
+import { Check, Info, ChevronDown, AlertCircle, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { bookingService } from '../../services/bookingService';
-import HotelSearchHeader from './components/HotelSearchHeader';
 
 const HotelReviewPage = () => {
   const navigate = useNavigate();
@@ -15,23 +10,32 @@ const HotelReviewPage = () => {
   
   // Use data from navigation state if available, otherwise fallback
   const liveState = location.state || {};
-  const hotel = liveState.hotel || { name: "The Taj Mahal Palace, Mumbai", location: "Apollo Bandar, Colaba, Mumbai, Maharashtra 400001" };
-  const room = liveState.room || { name: "Luxury Grande Room", price: "15,000", tax: "2,145" };
+  // For the exact MMT look we can fallback to the screenshot data to match the image, 
+  // but use dynamic data if passed from actual flow.
+  const hotel = liveState.hotel || { 
+    name: "Ginger Goa, Candolim", 
+    location: "195/23-A/B, Candolim Main Road, Near Lawande Super Market, Anna Waddo,Candolim, Saligao, North Goa, Goa, Candolim, Goa, India",
+    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?fit=crop&w=400&q=80"
+  };
+  const room = liveState.room || { name: "Luxe Twin Room", price: "3899", tax: "195" };
 
   const [guestDetails, setGuestDetails] = useState({
+    title: 'Mr',
     firstName: '',
     lastName: '',
     email: '',
     mobile: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [tripSecure, setTripSecure] = useState(true);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   // Calculate prices based on room data
-  const basePrice = parseInt(room.price.toString().replace(/,/g, '')) || 15000;
-  const taxPrice = parseInt(room.tax.toString().replace(/,/g, '')) || 2145;
-  const nights = 1; // Default to 1 night for simplicity unless specified
-  const discount = 1250;
-  const totalPayable = (basePrice + taxPrice) * nights - discount;
+  const basePrice = parseInt(room.price.toString().replace(/,/g, '')) || 3899;
+  const taxPrice = parseInt(room.tax.toString().replace(/,/g, '')) || 195;
+  const nights = 1; 
+  const tripSecurePrice = tripSecure ? 59 * 2 * nights : 0; // ₹59 per person per night (2 adults)
+  const totalPayable = (basePrice + taxPrice) * nights + tripSecurePrice;
 
   // Preload Razorpay SDK
   useEffect(() => {
@@ -55,7 +59,7 @@ const HotelReviewPage = () => {
         key: 'rzp_test_SSesz1GFvxuPR3',
         amount: Math.round(totalPayable * 100),
         currency: 'INR',
-        name: 'WingTrip Hotels',
+        name: 'MakeMyTrip Hotels',
         description: `${hotel.name} - ${room.name}`,
         ...(orderId && { order_id: orderId }),
         handler: async function (response) {
@@ -73,12 +77,13 @@ const HotelReviewPage = () => {
             }
             toast.success('🏨 Hotel Booked Successfully!', {
               duration: 5000,
-              style: { background: '#10b981', color: '#fff', fontWeight: 'black', borderRadius: '15px' }
             });
-            navigate('/profile');
+            setIsConfirmed(true);
+            window.scrollTo(0,0);
           } catch (err) {
             toast.success('🏨 Hotel Booked! Confirmation will be emailed shortly.');
-            navigate('/profile');
+            setIsConfirmed(true);
+            window.scrollTo(0,0);
           }
         },
         prefill: {
@@ -86,7 +91,7 @@ const HotelReviewPage = () => {
           email: guestDetails.email,
           contact: guestDetails.mobile
         },
-        theme: { color: '#2563eb' },
+        theme: { color: '#008cff' },
         modal: { ondismiss: () => setIsProcessing(false) }
       };
 
@@ -116,240 +121,399 @@ const HotelReviewPage = () => {
     }
   };
 
-  return (
-    <div className="bg-[#f2f2f2] min-h-screen font-sans pb-20">
-      <HotelSearchHeader destination="Mumbai" checkIn="18 Mar 2026" />
-
-      <div className="max-w-7xl mx-auto px-6 pt-10">
-        
-        {/* Step Indicator (Premium) */}
-        <div className="flex items-center justify-center gap-6 mb-12">
-          {[
-            { label: 'Review', active: true, done: false },
-            { label: 'Payment', active: false, done: false },
-            { label: 'Confirm', active: false, done: false }
-          ].map((step, idx) => (
-            <div key={idx} className="flex items-center gap-4 group">
-               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg transition-all duration-500 ${
-                 step.active ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/30 scale-110' : 'bg-white text-gray-300 border border-gray-100'
-               }`}>
-                  {idx + 1}
+  if (isConfirmed) {
+    return (
+      <div className="bg-[#f2f2f2] min-h-screen font-sans pb-24">
+         <div className="bg-white px-8 py-4 shadow-sm font-black text-xl text-gray-900 border-b border-gray-200">
+          Booking Confirmed
+         </div>
+         <div className="max-w-[700px] mx-auto mt-10 p-8 bg-white border border-gray-200 shadow-sm rounded">
+            <div className="flex items-center gap-4 mb-8">
+               <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                  <Check size={32} strokeWidth={3} />
                </div>
-               <span className={`text-[12px] font-black uppercase tracking-[0.2em] transition-colors ${
-                  step.active ? 'text-blue-600' : 'text-gray-400'
-               }`}>{step.label}</span>
-               {idx < 2 && <div className="w-16 h-[2px] bg-gray-200 mx-4 rounded-full"></div>}
+               <div>
+                  <h1 className="text-2xl font-black text-gray-900">Your hotel is confirmed!</h1>
+                  <p className="text-sm font-bold text-gray-500 mt-1">Confirmation code: <span className="text-gray-900 bg-gray-100 px-2 rounded">HTL8402X</span></p>
+               </div>
             </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col lg:flex-row gap-10 items-start">
-          
-          {/* Main Content Area */}
-          <div className="flex-1 space-y-10">
             
-            {/* 1. Hotel Details Card */}
-            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden p-8 transition-all hover:shadow-md">
-               <div className="flex items-start justify-between mb-8">
+            <div className="border border-gray-200 rounded p-5 mb-6 bg-gray-50">
+               <h2 className="text-xl font-black text-gray-900 mb-2">{hotel.name}</h2>
+               <p className="text-sm font-bold text-gray-500 mb-4 tracking-tight">{hotel.location}</p>
+               <div className="flex justify-between border-t border-gray-200 pt-4">
                   <div>
-                    <span className="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-wider mb-3 inline-block">Confirm Details</span>
-                    <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight leading-none">{hotel.name}</h2>
-                    <div className="flex items-center gap-2 text-gray-500 font-bold text-sm mt-3">
-                       <MapPin size={16} className="text-blue-600" />
-                       {hotel.location}
-                    </div>
+                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">CHECK IN</p>
+                     <p className="text-gray-800 font-black">18 Mar 2026, 2:00 PM</p>
                   </div>
                   <div className="text-right">
-                     <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">Room Category</p>
-                     <p className="text-blue-600 font-black uppercase text-sm tracking-tight">{room.name}</p>
-                  </div>
-               </div>
-
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-y border-gray-50">
-                  <div className="space-y-4">
-                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 shadow-sm shadow-blue-100/50">
-                           <Calendar size={18} />
-                        </div>
-                        <div>
-                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Check-In</p>
-                           <p className="text-sm font-black text-gray-900 uppercase tracking-tight">Sat, 18 Mar 2026 <span className="text-gray-300 font-bold lowercase text-xs ml-2">12:00 PM</span></p>
-                        </div>
-                     </div>
-                  </div>
-                  <div className="space-y-4">
-                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 shadow-sm shadow-orange-100/50">
-                           <Calendar size={18} />
-                        </div>
-                        <div>
-                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Check-Out</p>
-                           <p className="text-sm font-black text-gray-900 uppercase tracking-tight">Mon, 20 Mar 2026 <span className="text-gray-300 font-bold lowercase text-xs ml-2">11:00 AM</span></p>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-
-               <div className="pt-8 flex items-center gap-10">
-                  <div className="flex items-center gap-3">
-                     <Users size={18} className="text-gray-400" />
-                     <span className="text-[13px] font-black text-gray-700 uppercase tracking-tight">2 Adults, 1 Room</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                     <ShieldCheck size={18} className="text-green-600" />
-                     <span className="text-[13px] font-black text-green-600 uppercase tracking-tight">Free Cancellation till 17 Mar</span>
+                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">CHECK OUT</p>
+                     <p className="text-gray-800 font-black">19 Mar 2026, 12:00 PM</p>
                   </div>
                </div>
             </div>
 
-            {/* 2. Guest Information Card */}
-            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
-               <div className="p-8 border-b border-gray-100 bg-gray-50/20 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-black text-gray-900 uppercase tracking-tight mb-1">Guest Information</h2>
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">E-Confirmation will be sent here</p>
-                  </div>
-                  <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-600/30">
-                     <User size={24} />
-                  </div>
+            <div className="space-y-4 mb-8">
+               <div className="flex justify-between items-center group">
+                 <span className="text-sm font-bold text-gray-500">Guest Name</span>
+                 <span className="text-sm font-black text-gray-900">{guestDetails.firstName || 'Guest'} {guestDetails.lastName}</span>
                </div>
+               <div className="flex justify-between items-center group">
+                 <span className="text-sm font-bold text-gray-500">Room</span>
+                 <span className="text-sm font-black text-gray-900">{room.name}</span>
+               </div>
+               <div className="flex justify-between items-center group">
+                 <span className="text-sm font-bold text-gray-500">Nights</span>
+                 <span className="text-sm font-black text-gray-900">{nights}</span>
+               </div>
+               <div className="flex justify-between items-center border-t border-gray-100 pt-4">
+                 <span className="text-lg font-black text-gray-900">Total Paid</span>
+                 <span className="text-xl font-black text-[#008cff]">₹{totalPayable.toLocaleString()}</span>
+               </div>
+            </div>
 
-               <form onSubmit={handlePayment} className="p-8 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                       <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">First Name</label>
-                       <div className="relative group">
-                          <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
-                          <input 
-                            type="text" 
-                            placeholder="e.g. John" 
-                            required
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-600 outline-none font-black text-gray-800 transition-all placeholder:font-bold placeholder:text-gray-300 shadow-inner"
-                            value={guestDetails.firstName}
-                            onChange={(e) => setGuestDetails({...guestDetails, firstName: e.target.value})}
-                          />
-                       </div>
-                    </div>
-                    <div className="space-y-3">
-                       <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Last Name</label>
-                       <input 
-                          type="text" 
-                          placeholder="e.g. Doe" 
-                          required
-                          className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-600 outline-none font-black text-gray-800 transition-all placeholder:font-bold placeholder:text-gray-300 shadow-inner"
-                          value={guestDetails.lastName}
-                          onChange={(e) => setGuestDetails({...guestDetails, lastName: e.target.value})}
-                       />
-                    </div>
-                  </div>
+            <button onClick={() => navigate('/profile')} className="w-full bg-[#008cff] text-white py-4 rounded font-black text-sm uppercase tracking-widest hover:bg-blue-600 transition-colors">
+               Go to Dashboard
+            </button>
+         </div>
+      </div>
+    );
+  }
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                       <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Email Address</label>
-                       <div className="relative group">
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
-                          <input 
-                            type="email" 
-                            placeholder="yourname@gmail.com" 
-                            required
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-600 outline-none font-black text-gray-800 transition-all placeholder:font-bold placeholder:text-gray-300 shadow-inner"
-                            value={guestDetails.email}
-                            onChange={(e) => setGuestDetails({...guestDetails, email: e.target.value})}
-                          />
-                       </div>
-                    </div>
-                    <div className="space-y-3">
-                       <label className="text-[11px] font-black text-gray-500 uppercase tracking-widest ml-1">Mobile Number</label>
-                       <div className="relative group">
-                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={18} />
-                          <input 
-                            type="tel" 
-                            placeholder="10 digit mobile number" 
-                            required
-                            pattern="[0-9]{10}"
-                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-600 outline-none font-black text-gray-800 transition-all placeholder:font-bold placeholder:text-gray-300 shadow-inner"
-                            value={guestDetails.mobile}
-                            onChange={(e) => setGuestDetails({...guestDetails, mobile: e.target.value})}
-                          />
-                       </div>
-                    </div>
-                  </div>
+  return (
+    <div className="bg-[#f2f2f2] min-h-screen font-sans pb-24">
+      {/* Top Simple Header */}
+      <div className="bg-white px-8 py-4 shadow-sm font-black text-xl text-gray-900 border-b border-gray-200">
+        Review your Booking
+      </div>
 
-                  <div className="bg-blue-50/50 rounded-2xl p-6 flex items-start gap-4 border border-blue-100">
-                    <ShieldCheck size={24} className="text-blue-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-[14px] font-black text-blue-900 uppercase tracking-tight">Safe Booking Policy</p>
-                      <p className="text-[12px] font-bold text-blue-600/70 italic leading-relaxed">Your data is secured with SSL encryption. WingTrip ensures 100% privacy and will never share your contact details.</p>
-                    </div>
-                  </div>
+      <div className="max-w-[1100px] mx-auto px-4 pt-6 flex flex-col lg:flex-row gap-6 items-start">
+        
+        {/* Left Column */}
+        <div className="flex-[2] space-y-4">
+          
+          {/* 1. Hotel Detail Card */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm">
+            <div className="p-5 flex gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="text-[22px] font-black text-gray-900 leading-tight">{hotel.name}</h2>
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex text-yellow-400 text-xs">★★★★</div>
+                  <span className="bg-gray-100 text-gray-600 border border-gray-200 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Couple Friendly</span>
+                </div>
+                <p className="text-gray-500 text-xs tracking-tight pr-6">
+                  {hotel.location}
+                </p>
+              </div>
+              <div className="w-[120px] h-[80px] shrink-0 rounded overflow-hidden">
+                <img src={hotel.image || "https://images.unsplash.com/photo-1566073771259-6a8506099945?fit=crop&w=400&q=80"} alt="Hotel" className="w-full h-full object-cover" />
+              </div>
+            </div>
 
-                  <button 
-                    type="submit"
-                    disabled={isProcessing}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white py-5 rounded-2xl font-black text-lg uppercase tracking-[0.2em] shadow-2xl shadow-blue-600/30 transform active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-4"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="animate-spin" size={24} />
-                        PROCESSING...
-                      </>
-                    ) : (
-                      <>
-                        CONFIRM & PAY ₹{totalPayable.toLocaleString()}
-                        <ArrowRight size={20} strokeWidth={3} />
-                      </>
-                    )}
-                  </button>
-               </form>
+            <div className="flex bg-[#fafafa] border-y border-gray-200 px-5 py-4">
+              <div className="flex-1 border-r border-gray-200">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">CHECK IN</p>
+                <p className="text-gray-800 font-bold text-[15px]">Sat <span className="font-black text-lg">18 Mar</span> 2026</p>
+                <p className="text-gray-500 text-xs mt-1">2 PM</p>
+              </div>
+              <div className="px-6 flex items-center justify-center border-r border-gray-200 text-[10px] text-gray-500 font-bold tracking-widest">
+                1 NIGHT
+              </div>
+              <div className="flex-1 pl-6">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">CHECK OUT</p>
+                <p className="text-gray-800 font-bold text-[15px]">Sun <span className="font-black text-lg">19 Mar</span> 2026</p>
+                <p className="text-gray-500 text-xs mt-1">12 PM</p>
+              </div>
+              <div className="flex-1 pl-6 flex items-center justify-end">
+                <span className="text-sm font-black text-gray-800">1 Night | 2 Adults | 1 Room</span>
+              </div>
+            </div>
+
+            <div className="p-5">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="font-black text-[16px] text-gray-900">{room.name}</h3>
+                  <p className="text-gray-500 text-xs font-bold mt-0.5">2 Adults</p>
+                </div>
+                <button className="text-[#008cff] font-bold text-sm uppercase">See Inclusions</button>
+              </div>
+              <ul className="text-xs text-gray-600 font-bold space-y-1.5 mt-4 ml-1">
+                <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-gray-400"></span> Room With Free Cancellation</li>
+                <li className="flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-gray-400"></span> No meals included</li>
+                <li className="flex items-center gap-2 text-green-700 italic">🎁 Complimentary Meal Upgrade</li>
+                <li className="flex items-center gap-2 text-green-700 italic">🍸 Enjoy Happy Hours with 1+1 offer</li>
+              </ul>
+              
+              <div className="mt-6">
+                <p className="text-[#008cff] font-bold text-xs flex items-center gap-1"><Check size={14} className="text-green-500"/> Cancellation policy details</p>
+                <div className="mt-4 flex items-center px-4 w-1/2">
+                   <div className="flex-1 border-t border-green-500 relative">
+                     <span className="absolute -top-1.5 left-0 w-2 h-2 rounded-full bg-green-500"></span>
+                     <p className="text-[10px] font-bold mt-2 -ml-2 text-gray-800">NOW</p>
+                   </div>
+                   <div className="relative">
+                     <span className="absolute -top-3 left-0 w-[1px] h-3 bg-gray-300"></span>
+                     <p className="text-[10px] font-bold mt-2 -ml-3 text-gray-800 text-center">17 Mar<br/>01:59 PM</p>
+                   </div>
+                   <div className="flex-1 border-t border-gray-300 relative border-dashed">
+                     <p className="text-[10px] text-gray-400 font-bold mt-2 text-right mr-4">Check-in</p>
+                   </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Right Section: Price Summary Sticky */}
-          <div className="lg:w-[380px] shrink-0 sticky top-[100px]">
+          {/* 2. Upgrade Your Stay Card */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm p-5">
+             <h3 className="font-black text-[16px] text-gray-900 mb-4">Upgrade Your Stay</h3>
+             <div className="flex gap-10">
+               <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700 group">
+                 <div className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center group-hover:border-[#008cff]"></div>
+                 <span>Add Breakfast for <span className="font-black text-gray-900">₹ 1995</span> for all guests</span>
+               </label>
+               <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-700 group">
+                 <div className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center group-hover:border-[#008cff]"></div>
+                 <span>Add Breakfast + Lunch/Dinner for <span className="font-black text-gray-900">₹ 4873</span> for all guests</span>
+               </label>
+             </div>
+          </div>
+
+          {/* 3. Important Information Card */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm p-5">
+             <h3 className="font-black text-[16px] text-gray-900 mb-4">Important information</h3>
              
-             <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden mb-6 transition-all hover:shadow-md">
-                <div className="p-8 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
-                   <h2 className="text-lg font-black text-gray-900 uppercase tracking-widest">Price Summary</h2>
-                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-blue-600">
-                      <CreditCard size={20} />
-                   </div>
+             <div className="border border-[#fdeeee] bg-[#fffafb] rounded-lg p-4 mb-4 relative overflow-hidden">
+                <div className="flex items-center gap-2 text-red-500 font-bold text-xs mb-1">
+                   <div className="w-4 h-4 rounded-full bg-red-100 flex items-center justify-center"><Info size={10} /></div>
+                   Couple/Bachelor Rules
                 </div>
-                <div className="p-8 space-y-5">
-                   <div className="flex justify-between text-[14px]">
-                      <span className="font-bold text-gray-500">Base Price (2 Nights)</span>
-                      <span className="font-black text-gray-900">₹{ (parseInt(room.price) * 2).toLocaleString() }</span>
-                   </div>
-                   <div className="flex justify-between text-[14px]">
-                      <span className="font-bold text-gray-500">Service Fee & Taxes</span>
-                      <span className="font-black text-gray-900">₹{ (parseInt(room.tax) * 2).toLocaleString() }</span>
-                   </div>
-                   <div className="flex justify-between text-[14px] text-green-600">
-                      <span className="font-bold">Member Discount</span>
-                      <span className="font-black">-₹1,250</span>
-                   </div>
-                   <div className="flex justify-between text-[14px] pt-6 border-t border-gray-100">
-                      <div className="flex flex-col">
-                        <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Payable</span>
-                        <span className="text-3xl font-black text-blue-600 italic tracking-tighter">₹{ ( (parseInt(room.price) + parseInt(room.tax)) * 2 - 1250 ).toLocaleString() }</span>
+                <p className="text-gray-800 text-sm font-bold">Unmarried couples allowed. Local ids are allowed</p>
+             </div>
+
+             <ul className="text-xs text-gray-600 font-bold space-y-2 ml-1">
+                <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full bg-gray-400 mt-1.5 shrink-0"></span> Primary Guest should be at least 18 years of age.</li>
+                <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full bg-gray-400 mt-1.5 shrink-0"></span> Groups with only male guests are allowed at the property</li>
+                <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full bg-gray-400 mt-1.5 shrink-0"></span> Passport, Aadhaar and Driving License are accepted as ID proof(s)</li>
+                <li className="flex items-start gap-2"><span className="w-1 h-1 rounded-full bg-gray-400 mt-1.5 shrink-0"></span> Pets are not allowed</li>
+             </ul>
+             <button className="text-[#008cff] font-bold text-xs mt-3">View More</button>
+          </div>
+
+          {/* 4. Guest Details Card */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm">
+             <div className="p-5">
+               <h3 className="font-black text-[16px] text-gray-900 mb-6">Guest Details</h3>
+               <form id="payment-form" onSubmit={handlePayment}>
+                 <div className="flex gap-4 mb-5">
+                    <div className="w-[100px]">
+                      <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest block mb-1">TITLE</label>
+                      <div className="border border-gray-300 rounded px-3 py-2 flex items-center justify-between cursor-pointer text-sm font-bold text-gray-800">
+                         {guestDetails.title} <ChevronDown size={14} className="text-gray-400"/>
                       </div>
-                   </div>
-                </div>
-                <div className="p-5 bg-blue-600 text-white text-center font-black text-[12px] uppercase tracking-[0.2em] shadow-inner">
-                   100% SECURE TRANSACTION
+                    </div>
+                    <div className="flex-1 flex gap-4">
+                      <div className="flex-1">
+                        <label className="text-[10px] text-gray-500 font-bold block mb-1 opacity-0">FIRST NAME</label>
+                        <input type="text" placeholder="First Name" required value={guestDetails.firstName} onChange={e=>setGuestDetails({...guestDetails, firstName: e.target.value})} className="w-full border border-gray-300 rounded px-3 py-2 text-sm font-bold text-gray-800 outline-none focus:border-[#008cff]" />
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[10px] text-gray-500 font-bold block mb-1 opacity-0">LAST NAME</label>
+                        <input type="text" placeholder="Last Name" required value={guestDetails.lastName} onChange={e=>setGuestDetails({...guestDetails, lastName: e.target.value})} className="w-full border border-gray-300 rounded px-3 py-2 text-sm font-bold text-gray-800 outline-none focus:border-[#008cff]" />
+                      </div>
+                    </div>
+                 </div>
+                 
+                 <div className="flex gap-4">
+                    <div className="flex-1">
+                      <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1">EMAIL ADDRESS <span className="lowercase font-normal tracking-normal text-gray-400">(Booking voucher will be sent to this email ID)</span></label>
+                      <input type="email" placeholder="Email ID" required value={guestDetails.email} onChange={e=>setGuestDetails({...guestDetails, email: e.target.value})} className="w-full border border-gray-300 rounded px-3 py-2 text-sm font-bold text-gray-800 outline-none focus:border-[#008cff]" />
+                    </div>
+                    <div className="flex-[0.6] flex gap-2">
+                       <div className="w-[80px]">
+                          <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1">MOBILE</label>
+                          <div className="border border-gray-300 rounded px-3 py-2 flex items-center justify-between text-sm font-bold text-gray-800">
+                            +91 <ChevronDown size={14} className="text-gray-400"/>
+                          </div>
+                       </div>
+                       <div className="flex-1">
+                          <label className="text-[10px] text-gray-500 font-bold uppercase block mb-1 opacity-0">NO</label>
+                          <input type="tel" placeholder="Contact Number" required value={guestDetails.mobile} onChange={e=>setGuestDetails({...guestDetails, mobile: e.target.value})} pattern="[0-9]{10}" className="w-full border border-gray-300 rounded px-3 py-2 text-sm font-bold text-gray-800 outline-none focus:border-[#008cff]" />
+                       </div>
+                    </div>
+                 </div>
+                 
+                 <label className="flex items-center gap-2 mt-5 cursor-pointer text-sm font-bold text-gray-800">
+                    <input type="checkbox" className="w-4 h-4 rounded border-gray-300 rounded-sm accent-[#008cff]" />
+                    <span>Enter GST Details <span className="text-gray-400 font-normal text-xs">(Optional)</span></span>
+                 </label>
+                 
+                 <button type="button" className="text-[#008cff] font-bold text-sm mt-4">+ Add Guest</button>
+               </form>
+             </div>
+             
+             <div className="bg-[#f0f6ff] px-5 py-3 border-t border-gray-100 flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-800">Login to prefill traveller details and get access to secret deals</span>
+                <button className="bg-white border border-[#008cff] text-[#008cff] text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded">LOGIN</button>
+             </div>
+          </div>
+
+          {/* 5. Your State Card */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm p-5">
+             <h3 className="font-black text-[16px] text-gray-900 mb-1">Your State <span className="text-gray-400 font-normal text-xs">(Required for GST purpose on your tax invoice. You can edit this anytime later in your profile section.)</span></h3>
+             
+             <div className="w-[300px] mt-4 mb-4">
+                <label className="text-xs text-gray-800 font-bold block mb-1">Select the State</label>
+                <div className="border border-gray-300 rounded px-3 py-2 flex items-center justify-between cursor-pointer text-sm font-bold text-gray-800">
+                   Delhi <ChevronDown size={14} className="text-[#008cff]"/>
                 </div>
              </div>
 
-             <div className="bg-white rounded-3xl border border-gray-200 p-8 shadow-sm group">
-                <h3 className="text-[12px] font-black text-gray-400 uppercase tracking-widest mb-6 px-1">Applied Offers</h3>
-                <div className="flex gap-3 bg-gray-50 p-2 rounded-2xl border border-gray-100/50">
-                   <input type="text" placeholder="Promo Code" className="flex-1 bg-transparent border-none rounded-lg px-4 py-2 text-sm font-black focus:ring-0 outline-none uppercase placeholder:lowercase" />
-                   <button className="bg-blue-600 text-white px-6 py-2 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-blue-600/20">Apply</button>
-                </div>
-             </div>
+             <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-gray-800">
+                <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-gray-300 rounded-sm accent-[#008cff]" />
+                <span>Confirm and save billing details to your profile</span>
+             </label>
+          </div>
 
+          {/* 6. Special Requests */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm p-5 flex items-start justify-between">
+             <div>
+                <h3 className="font-black text-[15px] text-gray-900 flex items-center gap-2"><span className="text-orange-500">🛎️</span> Special Requests</h3>
+                <p className="text-[11px] text-gray-500 font-bold mt-1 max-w-[600px]">Add any special requests for your stay. These will be sent to the property after booking, and they will do their best to accommodate them.</p>
+             </div>
+             <button className="text-[#008cff] font-black text-xs uppercase tracking-widest">MAKE A REQUEST</button>
+          </div>
+
+          {/* 7. Trip Secure */}
+          <div className="bg-white border border-gray-200 rounded shadow-sm overflow-hidden mb-8">
+             <div className="bg-[#effefb] px-4 py-2 text-xs font-bold text-gray-700 flex items-center gap-2 border-b border-gray-100">
+                <ShieldCheck size={16} className="text-[#00c598]" /> Chase the adrenaline rush worry-free! Secure your trip against sudden events
+             </div>
+             <div className="p-5">
+               <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-black text-lg text-gray-900">Trip Secure</h3>
+                  <div className="flex gap-2">
+                     <span className="w-8 h-8 bg-blue-100 rounded text-[10px] font-black text-blue-600 flex items-center justify-center italic">ALL</span>
+                     <span className="w-8 h-8 bg-pink-100 rounded text-[10px] font-black text-pink-600 flex items-center justify-center italic">SAFE</span>
+                  </div>
+               </div>
+               <p className="text-xs font-bold text-[#008cff] mb-4">Enjoy a Worry-Free Stay</p>
+               
+               <div className="bg-[#f2f8ff] p-4 rounded text-xs font-bold space-y-3 mb-4">
+                  <div className="flex justify-between items-center text-gray-700">
+                     <div className="flex items-center gap-2"><span className="text-[#00c598]">🏥</span> Medical Assistance</div>
+                     <div className="font-black">24*7 SUPPORT</div>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-700">
+                     <div className="flex items-center gap-2"><span className="text-orange-500">💗</span> Personal Accident</div>
+                     <div className="font-black">Rs 10,00,000</div>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-700">
+                     <div className="flex items-center gap-2"><span className="text-blue-500">⚙</span> OPD Expenses</div>
+                     <div className="font-black">Rs 25,000</div>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-700">
+                     <div className="flex items-center gap-2"><span className="text-gray-400">🏨</span> Refund on Hotel Cancellation</div>
+                     <div className="font-black">Rs 10,000</div>
+                  </div>
+                  <div className="text-right text-[#008cff] pt-1">7 more benefits</div>
+               </div>
+               
+               <p className="text-sm font-black text-gray-900 mb-1">₹59 <span className="font-bold text-gray-500 text-xs text-normal">per person per night</span></p>
+               <p className="text-[10px] font-bold text-gray-400 mb-4 tracking-tight">18% GST Included | Non-Refundable</p>
+
+               <div className="space-y-0 border border-gray-200 rounded overflow-hidden">
+                  <label className={`flex items-center gap-3 p-3 cursor-pointer ${tripSecure ? 'bg-[#f4f9ff]' : 'bg-white'}`}>
+                    <input type="radio" name="tripSecure" checked={tripSecure} onChange={() => setTripSecure(true)} className="w-4 h-4 accent-[#008cff]" />
+                    <span className="text-sm font-bold text-gray-800">Yes, secure my trip.</span>
+                  </label>
+                  <div className="h-[1px] bg-gray-200 w-full"></div>
+                  <label className={`flex items-center gap-3 p-3 cursor-pointer ${!tripSecure ? 'bg-[#f4f9ff]' : 'bg-white'}`}>
+                    <input type="radio" name="tripSecure" checked={!tripSecure} onChange={() => setTripSecure(false)} className="w-4 h-4 accent-[#008cff]" />
+                    <span className="text-sm font-bold text-gray-800">No, I will book without trip secure.</span>
+                  </label>
+               </div>
+             </div>
+          </div>
+          
+          {/* Bottom Agree & Pay Banner */}
+          <div className="pt-2">
+            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-600 mb-4">
+               <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-gray-300 rounded-sm accent-[#008cff]" />
+               <span>By proceeding, I agree to MakeMyTrip's <span className="text-[#008cff]">User Agreement</span>, <span className="text-[#008cff]">Terms of Service</span> and <span className="text-[#008cff]">Cancellation & Property Booking Policies</span>.</span>
+            </label>
+            <button 
+              form="payment-form" 
+              disabled={isProcessing}
+              className="bg-[#008cff] hover:bg-blue-600 text-white font-black text-[16px] px-16 py-3 rounded shadow-md transition-colors w-[220px] h-[50px] flex items-center justify-center opacity-90 disabled:opacity-70"
+            >
+               {isProcessing ? 'PROCESSING...' : 'PAY NOW'}
+            </button>
           </div>
 
         </div>
+
+        {/* Right Column (Sticky) */}
+        <div className="flex-[0.8] w-full shrink-0 sticky top-6 space-y-4">
+           
+           {/* Price Summary */}
+           <div className="bg-white border border-gray-200 rounded shadow-sm">
+              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                 <h2 className="text-lg font-black text-gray-900">Price Summary</h2>
+                 <span className="text-xs font-bold text-[#008cff] cursor-pointer">View Price Breakup <ChevronDown size={14} className="inline"/></span>
+              </div>
+              <div className="p-4 space-y-3">
+                 <div className="flex justify-between text-sm font-bold text-gray-800">
+                    <span>Price ({nights} Night x 1 Room)</span>
+                    <span>₹{basePrice.toLocaleString()}</span>
+                 </div>
+                 {tripSecure && (
+                   <div className="flex justify-between text-sm font-bold text-gray-800">
+                      <span>Trip Secure (2 Guests)</span>
+                      <span>₹{tripSecurePrice}</span>
+                   </div>
+                 )}
+                 <div className="flex justify-between text-sm font-bold text-gray-800">
+                    <span>Taxes & Service Fees</span>
+                    <span>₹{taxPrice.toLocaleString()}</span>
+                 </div>
+              </div>
+              <div className="px-4 py-4 border-t border-gray-200 flex justify-between items-center bg-[#fafafa] rounded-b">
+                 <span className="font-black text-lg text-gray-900">Total Amount to be paid</span>
+                 <span className="font-black text-[22px] text-gray-900">₹{totalPayable.toLocaleString()}</span>
+              </div>
+           </div>
+
+           {/* Coupon Codes */}
+           <div className="bg-white border border-gray-200 rounded shadow-sm">
+              <div className="px-4 py-3 border-b border-gray-100">
+                 <h2 className="text-[15px] font-black text-gray-900">Coupon Codes</h2>
+              </div>
+              <div className="p-4">
+                 <div className="flex gap-0 bg-[#fafafa] border border-gray-200 rounded overflow-hidden">
+                    <input type="text" placeholder="Have A Coupon Code?" className="flex-1 px-3 py-2 text-sm font-bold bg-transparent outline-none uppercase placeholder:capitalize" />
+                    <button className="bg-gray-100 text-gray-400 font-black text-[11px] px-4 border-l border-gray-200 tracking-widest active:bg-gray-200 uppercase">Apply</button>
+                 </div>
+                 <p className="text-[10px] font-bold text-gray-500 mt-3 mb-2">No coupon codes applicable for this property.</p>
+                 <div className="bg-[#fcf8e3] text-[#8a6d3b] text-[10px] font-bold px-3 py-1.5 rounded border border-[#faebcc]">
+                    MMT Gift Cards can be applied at payment step
+                 </div>
+              </div>
+           </div>
+
+           {/* Login Promo Banner */}
+           <div className="bg-white border border-gray-200 rounded shadow-sm p-4">
+              <h2 className="text-xs font-black text-gray-900 uppercase tracking-tight mb-3">Why <span className="text-[#008cff]">Sign Up</span> or <span className="text-[#008cff]">Login</span></h2>
+              <ul className="text-xs text-gray-600 font-bold space-y-2">
+                 <li className="flex gap-2 items-start"><Check size={14} className="text-[#00c598] shrink-0 mt-0.5"/> Get access to <span className="font-black text-gray-900">Secret Deals</span></li>
+                 <li className="flex gap-2 items-start"><Check size={14} className="text-[#00c598] shrink-0 mt-0.5"/> <span className="font-black text-gray-900">Book Faster</span> - we'll save & pre-enter your details</li>
+                 <li className="flex gap-2 items-start"><Check size={14} className="text-[#00c598] shrink-0 mt-0.5"/> <span className="font-black text-gray-900">Manage your bookings</span> from one place</li>
+              </ul>
+           </div>
+
+        </div>
+
       </div>
     </div>
   );
