@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useLoginMutation } from '../../services/authService';
 import { toast } from 'react-hot-toast';
+import { useAuthModal } from '../../context/AuthContext';
 
 const inputCls = `
   block w-full py-3 bg-transparent border-0 border-b-2 border-gray-300
@@ -10,12 +11,13 @@ const inputCls = `
   placeholder:text-gray-400 outline-none px-1
 `;
 
-const Login = () => {
+const Login = ({ isModal = false }) => {
   const [tab, setTab] = useState('email');
   const [formData, setFormData] = useState({ email: '', mobile: '', password: '' });
   const [loginMutation, { isLoading: loading }] = useLoginMutation();
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { switchAuthView, closeAuthModal } = useAuthModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,13 +31,25 @@ const Login = () => {
       if (res.status) {
         if (res.data?.userId) {
           toast.success(`OTP sent to your ${tab === 'email' ? 'email' : 'mobile'}!`);
-          navigate('/auth/verify-otp', { state: { userId: res.data.userId, type: tab } });
+          if (isModal) {
+             // For modal, we might still need a separate OTP view or just close and let them use the page
+             // For now, let's navigate to OTP page as it's a complex flow
+             closeAuthModal();
+             navigate('/auth/verify-otp', { state: { userId: res.data.userId, type: tab } });
+          } else {
+             navigate('/auth/verify-otp', { state: { userId: res.data.userId, type: tab } });
+          }
         } else {
           toast.success('Login Successful!');
           localStorage.setItem('user', JSON.stringify(res.data?.user || res.data));
           if (res.data?.token) localStorage.setItem('token', res.data.token);
           window.dispatchEvent(new Event('auth-change'));
-          navigate('/');
+          
+          if (isModal) {
+            closeAuthModal();
+          } else {
+            navigate('/');
+          }
         }
       } else {
         setError(res.message || 'Authentication failed.');
@@ -50,17 +64,17 @@ const Login = () => {
 
   return (
     <div className="w-full">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">Login</h1>
+      <div className="text-center mb-5">
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Login</h1>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center">
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center animate-shake">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="space-y-6">
           {tab === 'email' ? (
@@ -85,12 +99,22 @@ const Login = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
-                <Link
-                  to="/auth/forgot-password"
-                  className="absolute right-0 top-3 text-[12px] font-semibold text-[#0B1A4B] hover:underline"
-                >
-                  Forgot password?
-                </Link>
+                {isModal ? (
+                  <button
+                    type="button"
+                    onClick={() => switchAuthView('forgot-password')}
+                    className="absolute right-0 top-3 text-[12px] font-semibold text-[#0B1A4B] hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth/forgot-password"
+                    className="absolute right-0 top-3 text-[12px] font-semibold text-[#0B1A4B] hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                )}
               </div>
             </>
           ) : (
@@ -110,7 +134,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-3 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 active:scale-95"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : (tab === 'email' ? 'Login' : 'Send OTP')}
         </button>
@@ -128,18 +152,27 @@ const Login = () => {
 
       <div className="mt-8 text-center text-[13px] font-medium text-gray-600">
         Don't have an account?{' '}
-        <Link to="/auth/register" className="text-[#0B1A4B] font-semibold hover:underline">
-          Sign up
-        </Link>
+        {isModal ? (
+          <button 
+            onClick={() => switchAuthView('register')}
+            className="text-[#0B1A4B] font-semibold hover:underline"
+          >
+            Sign up
+          </button>
+        ) : (
+          <Link to="/auth/register" className="text-[#0B1A4B] font-semibold hover:underline">
+            Sign up
+          </Link>
+        )}
       </div>
 
-      <div className="mt-8 flex items-center gap-4">
+      <div className="mt-6 flex items-center gap-4">
         <div className="flex-1 h-px bg-gray-200"></div>
-        <span className="text-[12px] font-medium text-gray-400">Or continue with</span>
+        <span className="text-[12px] font-medium text-gray-400 uppercase tracking-widest">Or continue with</span>
         <div className="flex-1 h-px bg-gray-200"></div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-5 flex flex-col gap-3">
         <a 
           href="http://localhost:5000/auth/google"
           className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700"
@@ -149,7 +182,7 @@ const Login = () => {
         </a>
         <a 
           href="#"
-          className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-[#1877F2]/5 hover:border-[#1877F2]/30 transition-colors text-sm font-semibold text-gray-700"
+          className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-[#1877F2]/5 hover:border-[#1877F2]/30 transition-colors text-sm font-semibold text-gray-700 opacity-50 cursor-not-allowed"
         >
           <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" className="w-5 h-5" />
           Facebook

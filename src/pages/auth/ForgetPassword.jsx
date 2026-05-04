@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react';
 import { useForgotPasswordMutation } from '../../services/authService';
 import { toast } from 'react-hot-toast';
+import { useAuthModal } from '../../context/AuthContext';
 
 const inputCls = `
   block w-full py-3 bg-transparent border-0 border-b-2 border-gray-300
@@ -10,13 +11,14 @@ const inputCls = `
   placeholder:text-gray-400 outline-none px-1
 `;
 
-const ForgetPassword = () => {
+const ForgetPassword = ({ isModal = false }) => {
   const [tab, setTab] = useState('email');
   const [value, setValue] = useState('');
   const [forgotPasswordMutation, { isLoading: loading }] = useForgotPasswordMutation();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { switchAuthView, closeAuthModal } = useAuthModal();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +33,7 @@ const ForgetPassword = () => {
         } else {
           toast.success('OTP dispatched to your mobile!');
           if (res.data?.userId) {
+            if (isModal) closeAuthModal();
             navigate('/auth/verify-otp', {
               state: { userId: res.data.userId, type: 'mobile', intent: 'reset-password' },
             });
@@ -54,17 +57,26 @@ const ForgetPassword = () => {
         <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto">
           <CheckCircle2 className="text-green-500" size={32} />
         </div>
-        <h2 className="text-3xl font-semibold text-gray-900">Link Sent!</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">Link Sent!</h2>
         <p className="text-gray-500 text-sm">
           A secure reset link was sent to: <span className="text-gray-900 font-semibold">{value}</span>
         </p>
         <div className="pt-4">
-          <Link
-            to="/auth/login"
-            className="text-[#0B1A4B] text-sm font-semibold hover:underline flex items-center justify-center gap-2"
-          >
-            <ArrowLeft size={16} /> Back to Sign In
-          </Link>
+          {isModal ? (
+            <button
+              onClick={() => switchAuthView('login')}
+              className="text-[#0B1A4B] text-sm font-semibold hover:underline flex items-center justify-center gap-2 w-full"
+            >
+              <ArrowLeft size={16} /> Back to Sign In
+            </button>
+          ) : (
+            <Link
+              to="/auth/login"
+              className="text-[#0B1A4B] text-sm font-semibold hover:underline flex items-center justify-center gap-2"
+            >
+              <ArrowLeft size={16} /> Back to Sign In
+            </Link>
+          )}
         </div>
       </div>
     );
@@ -72,17 +84,17 @@ const ForgetPassword = () => {
 
   return (
     <div className="w-full">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">Recover Access</h1>
+      <div className="text-center mb-5">
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Recover Access</h1>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center">
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center animate-shake">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
         
         <div className="space-y-6">
           <p className="text-xs text-gray-500 text-center">
@@ -112,7 +124,7 @@ const ForgetPassword = () => {
 
         <button
           type="submit" disabled={loading}
-          className="w-full py-3.5 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-3 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 active:scale-95"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : (tab === 'email' ? 'Send Reset Link' : 'Send OTP')}
         </button>
@@ -127,10 +139,19 @@ const ForgetPassword = () => {
         </button>
       </div>
 
-      <div className="mt-8 text-center text-[13px] font-medium text-gray-600">
-        <Link to="/auth/login" className="text-[#0B1A4B] font-semibold hover:underline flex items-center justify-center gap-1">
-          <ArrowLeft size={14} /> Back to Sign In
-        </Link>
+      <div className="mt-6 text-center text-[13px] font-medium text-gray-600">
+        {isModal ? (
+          <button 
+            onClick={() => switchAuthView('login')}
+            className="text-[#0B1A4B] font-semibold hover:underline flex items-center justify-center gap-1 w-full"
+          >
+            <ArrowLeft size={14} /> Back to Sign In
+          </button>
+        ) : (
+          <Link to="/auth/login" className="text-[#0B1A4B] font-semibold hover:underline flex items-center justify-center gap-1">
+            <ArrowLeft size={14} /> Back to Sign In
+          </Link>
+        )}
       </div>
     </div>
   );

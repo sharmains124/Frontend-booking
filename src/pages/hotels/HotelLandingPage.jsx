@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import BookingEngine from '../../components/SearchForm';
 import { ChevronRight, ChevronLeft, QrCode } from 'lucide-react';
-import HotelTopDeals from './components/HotelTopDeals';
-import HotelPropertyBrands from './components/HotelPropertyBrands';
-import HotelPopularDestinations from './components/HotelPopularDestinations';
+import { Link } from 'react-router-dom';
 
 const HOTEL_OFFERS_DATA = [
    {
@@ -162,7 +160,7 @@ const HotelLandingPage = () => {
                      </div>
                   </div>
                   <div className="flex items-center gap-4">
-                     <button className="hidden md:block text-[#008cff] font-black text-xs uppercase tracking-widest hover:text-blue-700 transition-colors mr-2">VIEW ALL →</button>
+                     <Link to="/offers" className="hidden md:block text-[#008cff] font-black text-xs uppercase tracking-widest hover:text-blue-700 transition-colors mr-2">VIEW ALL →</Link>
                      {totalPages > 1 && (
                         <div className="flex gap-2">
                            <button 
@@ -291,46 +289,9 @@ const HotelLandingPage = () => {
 
          </main>
 
-         {/* Hotel Top Deals Section */}
-         <div className="max-w-[1200px] mx-auto px-4 pt-10">
-           <HotelTopDeals />
-         </div>
 
-         {/* Popular Hotel Destinations */}
-         <div className="max-w-[1200px] mx-auto px-4 pt-10">
-           <HotelPopularDestinations />
-         </div>
 
-         {/* Property Brands Slider */}
-         <div className="max-w-[1200px] mx-auto px-4 pt-10 pb-12">
-           <HotelPropertyBrands />
-         </div>
 
-         {/* 5. SEO Footer Text Area */}
-         <div className="bg-[#e5eef4] pt-16">
-            <div className="max-w-[1200px] mx-auto px-4 text-[10px] text-gray-500 font-medium leading-relaxed pb-12 space-y-4">
-               <div>
-                  <h4 className="font-bold text-gray-700 uppercase mb-1">Make WingTrip</h4>
-                  <p>About Us, Investor Relations, Careers, MMT Foundation, CSR Policy, myPartner - Travel Agent Portal, Foreign Exchange, List your hotel, Corporate Travel, WingTrip Corporate</p>
-               </div>
-               <div>
-                  <h4 className="font-bold text-gray-700 uppercase mb-1">ABOUT THE SITE</h4>
-                  <p>Customer Support, Payment Security, Privacy Policy, User Agreement, Terms of Service, More Offices, Make A Payment, Work From Home, Escalation Channel</p>
-               </div>
-               <div>
-                  <h4 className="font-bold text-gray-700 uppercase mb-1">PRODUCT OFFERING</h4>
-                  <p>Flights, International Flights, Charter Flights, Hotels, International Hotels, Homestays and Villas, Activities, Holidays In India, International Holidays, Book Hotels From UAE, WingTrip Corporate Travel, Book Online Cabs, Book Bus Tickets, Book Train Tickets, Cheap Tickets to India, Book Flights From US, Book Flights From UAE, Trip Planner, Gift Cards, Trip Money, Trip Ideas, Travel Blog, PNR Status, WingTrip Advertising Solutions, One Way Cab</p>
-               </div>
-               <div>
-                  <h4 className="font-bold text-gray-700 uppercase mb-1">HOTELS</h4>
-                  <p>Hotels In Manali, Hotels In Goa, Hotels In Jaipur, Hotels In Ooty, Hotels In Udaipur, Hotels in Puri, Hotels In North Goa, Hotels In Chandigarh, Hotels In Mahabaleshwar, Hotels In Kolkata, Hotels In Mumbai, Hotels In Delhi, Hotels In Bangalore, Hotels In Shimla, Hotels In Tirupati, Hotels In Lonavala, Hotels In Pondicherry, Hotels In Yercaud, Hotels In Mussoorie, Hotels in Kodaikanal, Hotels in Mount Abu, Hotels in Haridwar, Hotels in Gurgaon, Hotels in Coorg, Hotels In Varanasi, Hotels In Wayanad</p>
-               </div>
-               <div>
-                  <h4 className="font-bold text-gray-700 uppercase mb-1">STATES OF INDIA</h4>
-                  <p>Hotels In Kerala, Hotels In Punjab, Hotels In Gujarat, Hotels In Madhya Pradesh, Hotels In Arunachal Pradesh, Hotels In Assam, Hotels In Bihar, Hotels In Chattisgarh, Hotels In Haryana, Hotels In Himachal Pradesh, Hotels In Jharkhand, Hotels In Karnataka, Hotels In Kerala, Hotels In Madhya Pradesh, Hotels In Maharashtra, Hotels In Manipur, Hotels In Meghalaya, Hotels In Mizoram, Hotels In Nagaland, Hotels In Odisha, Hotels In Telangana, Hotels In Tripura, Hotels In Uttar Pradesh, Hotels In Uttarakhand, Hotels In West Bengal</p>
-               </div>
-            </div>
-         </div>
       </div>
    );
 };

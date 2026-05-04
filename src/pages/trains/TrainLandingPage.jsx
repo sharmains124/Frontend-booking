@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import TrainPopularRoutes from './component/TrainPopularRoutes';
 import {
   Train, MapPin, Calendar, Users, ArrowRight, ArrowLeftRight,
   ShieldCheck, Clock, Star, Zap, TrendingDown, Globe,
-  ChevronDown, X
+  ChevronDown, X, Check
 } from 'lucide-react';
 
 const POPULAR_STATIONS = [
@@ -32,6 +32,48 @@ const POPULAR_ROUTES = [
 ];
 
 const TrainLandingPage = () => {
+  const navigate = useNavigate();
+  const [searchTab, setSearchTab] = useState('booking');
+  const [from, setFrom] = useState({ code: 'NDLS', name: 'New Delhi', full: 'New Delhi Railway Station' });
+  const [to, setTo] = useState({ code: 'CSTM', name: 'Mumbai CST', full: 'Chhatrapati Shivaji Terminus' });
+  const [date, setDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  });
+  const [travelClass, setTravelClass] = useState('Sleeper (SL)');
+  const [passengers, setPassengers] = useState(1);
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'from' | 'to' | 'class' | null
+  const [query, setQuery] = useState('');
+  const [swapAngle, setSwapAngle] = useState(0);
+
+  // ─── Seamless Video Loop Logic ───────────────────────────────────────────
+  const v1Ref = useRef(null);
+  const v2Ref = useRef(null);
+  const [activeVideo, setActiveVideo] = useState(1); // 1 or 2
+  const crossfadeBuffer = 2; // seconds before end to start transition
+
+  useEffect(() => {
+    const v1 = v1Ref.current;
+    const v2 = v2Ref.current;
+    if (!v1 || !v2) return;
+
+    const checkLoop = () => {
+      const active = activeVideo === 1 ? v1 : v2;
+      const next = activeVideo === 1 ? v2 : v1;
+
+      if (active.duration > 0 && active.currentTime >= (active.duration - crossfadeBuffer)) {
+          if (next.paused) {
+            next.currentTime = 0;
+            next.play().catch(() => {});
+            setActiveVideo(activeVideo === 1 ? 2 : 1);
+          }
+      }
+    };
+
+    const interval = setInterval(checkLoop, 500);
+    return () => clearInterval(interval);
+  }, [activeVideo]);
 
 const TRAIN_OFFERS = [
   {
@@ -96,7 +138,7 @@ const TrainOffersSlider = () => {
           <div className="ml-auto flex items-center gap-4 shrink-0 border-b border-gray-200 absolute bottom-0 left-[110px] right-0 z-[-1]"></div>
           
           <div className="ml-auto flex items-center gap-3 shrink-0 relative top-1">
-            <button className="text-[14px] font-black text-blue-600 hover:underline mr-2">VIEW ALL →</button>
+            <Link to="/offers" className="text-[14px] font-black text-blue-600 hover:underline mr-2">VIEW ALL →</Link>
             <div className="flex gap-1.5">
               <button 
                 onClick={() => setOfferPage(p => Math.max(0, p-1))} 
@@ -151,22 +193,6 @@ const TrainOffersSlider = () => {
   );
 };
 
-
-  const navigate = useNavigate();
-  const [from, setFrom] = useState({ code: 'NDLS', name: 'New Delhi', full: 'New Delhi Railway Station' });
-  const [to, setTo] = useState({ code: 'CSTM', name: 'Mumbai CST', full: 'Chhatrapati Shivaji Terminus' });
-  const [date, setDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().split('T')[0];
-  });
-  const [travelClass, setTravelClass] = useState('Sleeper (SL)');
-  const [passengers, setPassengers] = useState(1);
-  const [activeDropdown, setActiveDropdown] = useState(null); // 'from' | 'to' | 'class' | null
-  const [query, setQuery] = useState('');
-  const [swapAngle, setSwapAngle] = useState(0);
-  const [searchTab, setSearchTab] = useState('booking'); // 'booking' | 'pnr' | 'status'
-
   const filtered = POPULAR_STATIONS.filter(s =>
     s.name.toLowerCase().includes(query.toLowerCase()) ||
     s.code.toLowerCase().includes(query.toLowerCase())
@@ -185,138 +211,155 @@ const TrainOffersSlider = () => {
   return (
     <div className="bg-bg-alt min-h-screen font-sans antialiased text-text-main overflow-x-hidden">
       {/* ─── Hero Section ───────────────────────────────────────────── */}
-      <section className="relative min-h-[700px] flex items-center justify-center bg-slate-950 pt-[80px]">
+      <section className="relative min-h-[720px] flex items-center justify-center bg-slate-950 pt-[80px]">
         {/* Video + Overlay Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           {/* Real train video */}
+          {/* Double Video for Seamless Looping */}
           <video
+            ref={v1Ref}
             autoPlay
-            loop
             muted
             playsInline
-            className="absolute inset-0 w-full h-full object-cover scale-105 transition-transform duration-1000"
-            style={{ filter: 'brightness(0.6) saturate(1.1)' }}
+            className={`absolute inset-0 w-full h-full object-cover scale-[1.15] transition-opacity duration-[1500ms] ease-in-out ${activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            style={{ filter: 'brightness(0.7)' }}
           >
-            <source src="/assets/train.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+            <source src="/assets/train-video.mp4" type="video/mp4" />
+          </video>
+          <video
+            ref={v2Ref}
+            muted
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover scale-[1.15] transition-opacity duration-[1500ms] ease-in-out ${activeVideo === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            style={{ filter: 'brightness(0.7)' }}
+          >
+            <source src="/assets/train-video.mp4" type="video/mp4" />
           </video>
 
-          {/* Emerald/Teal cinematic colour grade overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/50 via-teal-950/30 to-cyan-950/50" />
-          {/* Bottom dark vignette so search card reads cleanly */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-          {/* Left vignette */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+          {/* Neutral Dark Overlay for Legibility */}
+          <div className="absolute inset-0 bg-slate-950/30" />
+          
+          {/* Neutral Vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+          
+          {/* Depth Vignette */}
+          <div className="absolute inset-x-0 inset-y-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(2,6,23,0.5)_100%)]" />
 
-          {/* Grid-line texture */}
-          <div className="absolute inset-0 opacity-10"
+          {/* Grid-line texture for a technical/modern feel */}
+          <div className="absolute inset-0 opacity-5"
             style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(255,255,255,0.04) 60px, rgba(255,255,255,0.04) 61px), repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.04) 60px, rgba(255,255,255,0.04) 61px)'
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.05) 40px, rgba(255,255,255,0.05) 41px)'
             }}
           />
 
-          {/* Glowing colour orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-400/15 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-400/15 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }} />
+          {/* Removed dynamic glowing blue accents */}
         </div>
 
         <div className="container-custom relative z-10 w-full text-center px-4">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 rounded-full px-5 py-2 mb-6 backdrop-blur-sm">
-            <Train size={14} className="text-emerald-400" />
-            <span className="text-emerald-300 text-[11px] font-black uppercase tracking-[0.3em]">India's Premium Train Booking</span>
-          </div>
-
-          <h1 className="text-4xl md:text-6xl lg:text-[70px] font-black text-white leading-tight tracking-tight mb-4 drop-shadow-2xl animate-fade-in-up">
-            Journey <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 decoration-[#008cff]/80 decoration-8 underline underline-offset-[12px]">Across</span> <span className="text-white/90 italic font-serif ml-2">India's Rails</span>
+          <h1 className="text-4xl md:text-5xl lg:text-[60px] font-black text-white leading-tight tracking-tight mb-4 drop-shadow-2xl animate-fade-in-up delay-100">
+            Ride the <span className="text-white decoration-[#008cff]/80 decoration-8 underline underline-offset-[12px]">Rails,</span> <span className="text-white/90 italic font-serif ml-2">Effortlessly</span>
           </h1>
 
-          <p className="text-base md:text-lg text-white/70 max-w-2xl mx-auto font-medium mb-10">
-            Book 12,000+ trains instantly. Tatkal, Express, Superfast — all at the best fares.
+          <p className="text-sm md:text-base lg:text-lg text-white/90 max-w-2xl mx-auto font-medium tracking-wide mb-10 drop-shadow-lg leading-relaxed animate-fade-in-up delay-200">
+            Book trains across India in seconds — fast, simple, and reliable.
           </p>
 
           {/* ─── Search Form Card ─────────────────────────────────────── */}
-          <div className="max-w-[1240px] mx-auto relative z-20 mt-8 mb-10" onClick={() => setActiveDropdown(null)}>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 pt-6 px-6 pb-10 relative w-full"
+          
+          <div className={`max-w-[1100px] mx-auto relative ${activeDropdown !== null ? 'z-[1000]' : 'z-20'} mt-8 mb-10`} onClick={() => setActiveDropdown(null)}>
+            
+            {/* MMT Style Backdrop Overlay - BEHIND THE FORM */}
+            {activeDropdown !== null && (
+              <div 
+                className="fixed inset-0 bg-slate-900/70 backdrop-blur-[4px] -z-10 animate-fade-in" 
+                onClick={(e) => { e.stopPropagation(); setActiveDropdown(null); }}
+              />
+            )}
+
+            <div className={`bg-white/95 backdrop-blur-xl rounded-[32px] shadow-[0_20px_70px_-15px_rgba(0,0,0,0.3)] border border-white/20 pt-8 px-6 md:px-8 pb-12 relative w-full animate-fade-in-up z-10`}
+              style={{ animationDelay: '300ms' }}
               onClick={e => e.stopPropagation()}>
 
               {/* ─── Top Radio Buttons Row ────────────────────────── */}
-              <div className="flex flex-col md:flex-row items-center justify-between mb-4">
-                <div className="flex items-center gap-6">
+              <div className="flex flex-col md:flex-row items-center justify-between mb-6">
+                <div className="flex items-center gap-8">
                   {[
                     { id: 'booking', label: 'Book Train Tickets' },
                     { id: 'pnr', label: 'Check PNR Status' },
                     { id: 'status', label: 'Live Train Status' },
                   ].map((tab) => (
                     <label key={tab.id} className="flex items-center gap-2 cursor-pointer group">
-                      <div className="relative flex items-center justify-center w-4 h-4">
+                      <div className="relative flex items-center justify-center w-5 h-5">
                         <input
                           type="radio"
                           name="trainTab"
                           checked={searchTab === tab.id}
                           onChange={() => setSearchTab(tab.id)}
-                          className="appearance-none w-4 h-4 rounded-full border border-gray-400 checked:border-blue-500 checked:bg-blue-500 transition-all cursor-pointer"
+                          className="appearance-none w-5 h-5 rounded-full border-2 border-gray-300 checked:border-blue-600 checked:bg-blue-600 transition-all cursor-pointer shadow-sm group-hover:border-blue-400"
                         />
-                        {searchTab === tab.id && <svg className="absolute w-[10px] h-[10px] text-white pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                        {searchTab === tab.id && <Check className="absolute w-3 h-3 text-white pointer-events-none" strokeWidth={4} />}
                       </div>
-                      <span className={`text-[14px] font-bold transition-colors ${searchTab === tab.id ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-900'}`}>
+                      <span className={`text-[15px] font-black tracking-tight transition-colors ${searchTab === tab.id ? 'text-gray-900 underline underline-offset-4 decoration-blue-600/30' : 'text-gray-400 group-hover:text-gray-600'}`}>
                         {tab.label}
                       </span>
                     </label>
                   ))}
                 </div>
 
-                <div className="flex flex-col text-right hidden md:flex">
-                  <span className="text-[13px] font-black text-gray-800 leading-tight">Train Ticket Booking</span>
-                  <span className="text-[11px] text-gray-500 font-medium">IRCTC Authorized e-ticketing</span>
+                <div className="hidden md:flex flex-col items-end">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <ShieldCheck size={14} className="text-emerald-500" />
+                    <span className="text-[13px] font-black text-gray-800 leading-tight">IRCTC AUTHORIZED</span>
+                  </div>
+                  <span className="text-[11px] text-gray-400 font-bold tracking-widest">OFFICIAL E-TICKETING PARTNER</span>
                 </div>
               </div>
 
               {/* ─── Fields Border Box ────────────────────────────── */}
-              <div className="border border-gray-200 rounded-lg grid grid-cols-1 md:grid-cols-4 bg-white relative text-left">
+              <div className="border border-gray-200 rounded-2xl grid grid-cols-1 md:grid-cols-4 bg-white/50 backdrop-blur-sm relative text-left shadow-inner">
 
                 {/* FROM */}
                 <div
-                  className={`p-4 py-3 cursor-pointer transition-colors hover:bg-blue-50/40 relative border-b md:border-b-0 md:border-r border-gray-200 rounded-t-lg md:rounded-tr-none md:rounded-l-lg ${activeDropdown === 'from' ? 'bg-blue-50/50' : ''}`}
-                  onClick={() => { setActiveDropdown('from'); setQuery(''); }}
+                  className={`group/field p-6 py-5 cursor-pointer transition-all hover:bg-blue-50/60 relative border-b md:border-b-0 md:border-r border-gray-100 ${activeDropdown === 'from' ? 'bg-blue-50/80 ring-1 ring-blue-500/20' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'from' ? null : 'from'); }}
                 >
-                  <p className="text-[13px] text-gray-500 mb-0 font-medium">From</p>
-                  <h3 className="text-[32px] font-black text-black leading-tight tracking-tight">{from.name}</h3>
-                  <p className="text-[13px] text-gray-500 truncate mt-0.5">
-                    {from.code}, {from.full.split(',')[0]}
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1 group-hover/field:translate-x-1 transition-transform">From Station</p>
+                  <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-none tracking-tight mb-1 truncate">{from.name}</h3>
+                  <p className="text-[11px] font-bold text-slate-500 truncate mt-1">
+                    [{from.code}] {from.full.split(',')[0]}
                   </p>
 
-                  {/* Dropdown */}
                   {activeDropdown === 'from' && (
                     <StationDropdown
                       query={query}
                       setQuery={setQuery}
                       stations={filtered}
+                      type="from"
                       onSelect={s => { setFrom(s); setActiveDropdown('to'); setQuery(''); }}
                     />
                   )}
                 </div>
 
                 {/* SWAP BUTTON */}
-                <div className="absolute left-[25%] top-[10%] md:top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex hidden md:flex">
+                <div className="absolute left-[25%] top-[10%] md:top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 hidden md:flex">
                   <button
                     onClick={handleSwap}
-                    className="w-10 h-10 bg-white border border-gray-200 rounded-full shadow-sm flex items-center justify-center text-blue-500 hover:text-blue-600 hover:shadow transition-all duration-300"
+                    className="w-12 h-12 bg-white border border-gray-100 rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] flex items-center justify-center text-blue-600 hover:text-white hover:bg-blue-600 hover:shadow-[0_4px_25px_rgba(37,99,235,0.4)] transition-all duration-500 hover:scale-110 active:scale-90"
                     style={{ transform: `rotate(${swapAngle}deg)` }}
                   >
-                    <ArrowLeftRight size={16} strokeWidth={2.5} />
+                    <ArrowLeftRight size={20} strokeWidth={2.5} />
                   </button>
                 </div>
 
                 {/* TO */}
                 <div
-                  className={`p-4 py-3 cursor-pointer transition-colors hover:bg-blue-50/40 relative border-b md:border-b-0 md:border-r border-gray-200 ${activeDropdown === 'to' ? 'bg-blue-50/50' : ''}`}
-                  onClick={() => { setActiveDropdown('to'); setQuery(''); }}
+                  className={`group/field p-6 py-5 cursor-pointer transition-all hover:bg-blue-50/60 relative border-b md:border-b-0 md:border-r border-gray-100 ${activeDropdown === 'to' ? 'bg-blue-50/80 ring-1 ring-blue-500/20' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'to' ? null : 'to'); }}
                 >
-                  <p className="text-[13px] text-gray-500 mb-0 font-medium">To</p>
-                  <h3 className="text-[32px] font-black text-black leading-tight tracking-tight">{to.name}</h3>
-                  <p className="text-[13px] text-gray-500 truncate mt-0.5">
-                    {to.code}, {to.full.split(',')[0]}
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1 group-hover/field:translate-x-1 transition-transform">To Station</p>
+                  <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-none tracking-tight mb-1 truncate">{to.name}</h3>
+                  <p className="text-[11px] font-bold text-slate-500 truncate mt-1">
+                    [{to.code}] {to.full.split(',')[0]}
                   </p>
 
                   {activeDropdown === 'to' && (
@@ -324,21 +367,22 @@ const TrainOffersSlider = () => {
                       query={query}
                       setQuery={setQuery}
                       stations={filtered}
+                      type="to"
                       onSelect={s => { setTo(s); setActiveDropdown(null); setQuery(''); }}
                     />
                   )}
                 </div>
 
                 {/* TRAVEL DATE */}
-                <div className="p-4 py-3 cursor-pointer transition-colors hover:bg-blue-50/40 relative border-b md:border-b-0 md:border-r border-gray-200 flex flex-col justify-center">
-                  <div className="flex items-center gap-1 mb-0 pointer-events-none">
-                    <p className="text-[13px] text-gray-500 font-medium">Travel Date</p>
-                    <ChevronDown size={14} className="text-blue-500" />
+                <div className="group/field p-6 py-5 cursor-pointer transition-all hover:bg-blue-50/60 relative border-b md:border-b-0 md:border-r border-gray-100 flex flex-col justify-center">
+                  <div className="flex items-center gap-1 mb-1 group-hover/field:translate-x-1 transition-transform">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Travel Date</p>
+                    <Calendar size={14} className="text-[#008cff]" />
                   </div>
-                  <div className="flex items-baseline gap-1.5 relative mt-0.5">
-                    <h3 className="text-[32px] font-black text-black leading-none">{new Date(date).getDate()}</h3>
-                    <span className="text-[18px] font-black text-black leading-none whitespace-nowrap">
-                      {new Date(date).toLocaleString('default', { month: 'short' })}' {new Date(date).getFullYear().toString().substring(2)}
+                  <div className="flex items-baseline gap-1 relative">
+                    <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-none tracking-tighter">{new Date(date).getDate()}</h3>
+                    <span className="text-sm font-black text-slate-900 leading-none whitespace-nowrap">
+                      {new Date(date).toLocaleString('default', { month: 'short' })} '{new Date(date).getFullYear().toString().substring(2)}
                     </span>
                     <input
                       type="date"
@@ -348,35 +392,43 @@ const TrainOffersSlider = () => {
                       className="absolute inset-0 opacity-0 cursor-pointer"
                     />
                   </div>
-                  <p className="text-[13px] text-gray-500 mt-0.5 capitalize">
+                  <p className="text-[10px] font-bold text-slate-500 mt-1 uppercase">
                     {new Date(date).toLocaleString('default', { weekday: 'long' })}
                   </p>
                 </div>
 
                 {/* CLASS */}
                 <div
-                  className={`p-4 py-3 cursor-pointer transition-colors hover:bg-blue-50/40 relative rounded-b-lg md:rounded-bl-none md:rounded-r-lg ${activeDropdown === 'class' ? 'bg-blue-50/50' : ''}`}
-                  onClick={() => setActiveDropdown(activeDropdown === 'class' ? null : 'class')}
+                  className={`group/field p-6 py-5 cursor-pointer transition-all hover:bg-blue-50/60 relative ${activeDropdown === 'class' ? 'bg-blue-50/80 ring-1 ring-blue-500/20' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === 'class' ? null : 'class'); }}
                 >
-                  <div className="flex items-center gap-1 mb-0">
-                    <p className="text-[13px] text-gray-500 font-medium">Class</p>
-                    <ChevronDown size={14} className="text-blue-500" />
+                  <div className="flex items-center gap-1 mb-1 group-hover/field:translate-x-1 transition-transform">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">Class</p>
+                    <ChevronDown size={14} className="text-[#008cff] group-hover:rotate-180 transition-transform duration-300" />
                   </div>
-                  <h3 className="text-[32px] font-black text-black leading-tight tracking-tight mt-0.5 uppercase">
+                  <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-none tracking-tight uppercase mb-1">
                     {travelClass === 'Sleeper (SL)' ? 'SL' : travelClass === 'AC 3 Tier (3A)' ? '3A' : travelClass === 'AC 2 Tier (2A)' ? '2A' : travelClass === 'AC First Class (1A)' ? '1A' : travelClass === 'All Class' ? 'ALL' : 'CC'}
                   </h3>
-                  <p className="text-[13px] text-gray-500 mt-0.5 truncate">
-                    {travelClass.split('(')[0].trim()}
+                  <p className="text-[11px] font-bold text-slate-500 mt-1 truncate">
+                    {travelClass.split('(')[0].trim()} Class
                   </p>
                   
                   {activeDropdown === 'class' && (
-                    <div className="absolute top-full right-0 z-[500] w-60 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden py-1">
-                      {['All Class', ...TRAIN_CLASSES].map(c => (
-                        <button key={c} onClick={() => { setTravelClass(c); setActiveDropdown(null); }}
-                          className={`w-full text-left px-5 py-3 text-[14px] font-bold hover:bg-blue-50 transition-colors ${travelClass === c ? 'text-blue-600 bg-blue-50' : 'text-gray-700'}`}>
-                          {c}
+                    <div className="fixed top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] w-[90%] max-w-[400px] bg-white shadow-[0_20px_70px_rgba(0,0,0,0.4)] rounded-[24px] overflow-hidden flex flex-col animate-fade-in-up">
+                      <div className="p-5 border-b border-gray-100 flex items-center justify-between">
+                        <h3 className="font-black text-slate-900 text-lg tracking-tight">Select Class</h3>
+                        <button onClick={() => setActiveDropdown(null)} className="p-2 hover:bg-slate-100 text-slate-500 rounded-full transition-colors">
+                          <X size={20} />
                         </button>
-                      ))}
+                      </div>
+                      <div className="py-2">
+                        {['All Class', ...TRAIN_CLASSES].map(c => (
+                          <button key={c} onClick={() => { setTravelClass(c); setActiveDropdown(null); }}
+                            className={`w-full text-left px-6 py-3.5 text-[15px] font-black hover:bg-blue-50 transition-colors ${travelClass === c ? 'text-blue-600 bg-blue-50' : 'text-gray-700'}`}>
+                            {c}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -387,9 +439,9 @@ const TrainOffersSlider = () => {
               <div className="absolute left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 z-[100]">
                 <button
                   onClick={handleSearch}
-                  className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white px-[70px] py-[15px] rounded-full font-black text-[22px] tracking-wide shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-center"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white px-20 py-5 rounded-[20px] font-black text-[24px] uppercase tracking-[0.1em] shadow-[0_15px_45px_-12px_rgba(37,99,235,0.6)] hover:shadow-[0_20px_60px_-12px_rgba(37,99,235,0.8)] hover:scale-[1.05] active:scale-95 transition-all duration-300 text-center"
                 >
-                  SEARCH
+                  Search Trains
                 </button>
               </div>
 
@@ -487,53 +539,66 @@ const TrainOffersSlider = () => {
         </div>
       </section>
 
-      {/* ─── SEO Footer Strip ────────────────────────────────────────── */}
-      <section className="bg-[#f5f7f9] py-8 border-t border-gray-200">
-        <div className="max-w-[1200px] mx-auto px-4 text-[10px] text-gray-400 font-medium leading-relaxed space-y-3">
-          <div><span className="font-black text-gray-600 uppercase text-[11px]">Popular Train Routes: </span>Delhi to Mumbai · Delhi to Kolkata · Mumbai to Goa · Bangalore to Chennai · Delhi to Jaipur · Mumbai to Ahmedabad · Hyderabad to Bangalore · Chennai to Coimbatore</div>
-          <div><span className="font-black text-gray-600 uppercase text-[11px]">Train Types: </span>Rajdhani Express · Shatabdi Express · Duronto Express · Garib Rath · Jan Shatabdi · Vande Bharat Express · Humsafar Express · Tejas Express</div>
-          <div><span className="font-black text-gray-600 uppercase text-[11px]">Train Classes: </span>First AC (1A) · Second AC (2A) · Third AC (3A) · Sleeper Class (SL) · Chair Car (CC) · Second Seating (2S) · AC Economy · Executive Chair Car</div>
-        </div>
-      </section>
+
 
     </div>
 
   );
 };
 
-// ─── Station Dropdown Component ───────────────────────────────────────────
-const StationDropdown = ({ query, setQuery, stations, onSelect }) => (
+const StationDropdown = ({ query, setQuery, stations, onSelect, type }) => (
   <div
-    className="absolute top-full left-0 z-[500] mt-2 w-[340px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
+    className="fixed top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] w-[90%] max-w-[650px] h-[85vh] max-h-[600px] bg-white shadow-[0_20px_70px_rgba(0,0,0,0.4)] rounded-[24px] overflow-hidden flex flex-col animate-fade-in-up"
     onClick={e => e.stopPropagation()}
   >
-    <div className="p-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-      <input
-        autoFocus
-        type="text"
-        placeholder="Search station or city..."
-        className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold text-text-main outline-none border-2 border-transparent focus:border-emerald-500"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-      />
+    <div className="p-5 md:p-6 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-20">
+      <h3 className="font-black text-slate-900 text-lg md:text-xl tracking-tight">
+        Select {type === 'from' ? 'Origin' : 'Destination'} Station
+      </h3>
     </div>
-    <div className="max-h-[280px] overflow-y-auto">
-      {stations.length > 0 ? stations.map(s => (
-        <div
-          key={s.code}
-          onClick={() => onSelect(s)}
-          className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-emerald-50 transition-all group"
-        >
-          <div className="w-12 h-10 bg-gray-100 group-hover:bg-emerald-100 rounded-xl flex items-center justify-center text-[11px] font-black text-text-muted group-hover:text-emerald-700 transition-all shrink-0">
-            {s.code}
-          </div>
-          <div>
-            <p className="text-[14px] font-black text-text-main group-hover:text-emerald-700 transition-colors">{s.name}</p>
-            <p className="text-[11px] font-medium text-text-muted">{s.full}</p>
-          </div>
+    <div className="p-5 md:p-6 pb-2 bg-white sticky top-[72px] md:top-[80px] z-10">
+      <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-blue-500 focus-within:bg-white transition-all shadow-inner">
+        <MapPin size={20} className="text-gray-400" />
+        <input
+          autoFocus
+          type="text"
+          placeholder="Search station or city..."
+          className="flex-1 bg-transparent border-none outline-none text-base font-bold text-slate-900 placeholder:text-gray-400 placeholder:font-medium"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+      </div>
+    </div>
+    <div className="max-h-[320px] overflow-y-auto custom-scrollbar p-2">
+      {stations.length > 0 ? (
+        <div className="space-y-1">
+          {stations.map(s => (
+            <div
+              key={s.code}
+              onClick={() => onSelect(s)}
+              className="flex items-center gap-4 px-4 py-4 cursor-pointer hover:bg-blue-50/50 rounded-2xl transition-all group"
+            >
+              <div className="w-14 h-11 bg-slate-50 group-hover:bg-blue-600 group-hover:text-white rounded-xl flex items-center justify-center text-[12px] font-black text-slate-500 transition-all shrink-0 shadow-sm">
+                {s.code}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-black text-slate-900 group-hover:text-blue-700 transition-colors truncate">{s.name}</p>
+                <p className="text-[12px] font-bold text-slate-400 truncate italic">{s.full}</p>
+              </div>
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                <ArrowRight size={16} className="text-blue-600" />
+              </div>
+            </div>
+          ))}
         </div>
-      )) : (
-        <div className="p-6 text-center text-text-muted font-bold text-sm">No stations found</div>
+      ) : (
+        <div className="p-10 text-center">
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="text-gray-300" size={24} />
+          </div>
+          <p className="text-slate-400 font-black text-[13px] uppercase tracking-widest">No stations found</p>
+          <p className="text-gray-400 text-[12px] mt-1">Try another keyword</p>
+        </div>
       )}
     </div>
   </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useRegisterMutation } from '../../services/authService';
 import { toast } from 'react-hot-toast';
+import { useAuthModal } from '../../context/AuthContext';
 
 const inputCls = `
   block w-full py-3 bg-transparent border-0 border-b-2 border-gray-300
@@ -10,7 +11,7 @@ const inputCls = `
   placeholder:text-gray-400 outline-none px-1
 `;
 
-const Register = () => {
+const Register = ({ isModal = false }) => {
   const [tab, setTab] = useState('email');
   const [formData, setFormData] = useState({
     first_name: '', last_name: '', email: '', mobile: '', password: '', confirm_password: '',
@@ -18,6 +19,7 @@ const Register = () => {
   const [registerMutation, { isLoading: loading }] = useRegisterMutation();
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { switchAuthView, closeAuthModal } = useAuthModal();
   const set = (k) => (e) => setFormData({ ...formData, [k]: e.target.value });
 
   const handleSubmit = async (e) => {
@@ -44,6 +46,9 @@ const Register = () => {
       const res = await registerMutation(payload).unwrap();
       if (res.status && res.data?.userId) {
         toast.success('OTP dispatched! Please verify.');
+        if (isModal) {
+            closeAuthModal();
+        }
         navigate('/auth/verify-otp', {
           state: { userId: res.data.userId, type: tab },
         });
@@ -60,17 +65,17 @@ const Register = () => {
 
   return (
     <div className="w-full">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-semibold text-gray-900 tracking-tight">Sign Up</h1>
+      <div className="text-center mb-5">
+        <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">Sign Up</h1>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center">
+        <div className="mb-6 bg-red-50 border border-red-200 text-red-600 text-[13px] font-medium p-3 rounded-lg text-center animate-shake">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-5">
         
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
@@ -125,7 +130,7 @@ const Register = () => {
 
         <button
           type="submit" disabled={loading}
-          className="w-full py-3.5 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-3 rounded-[12px] bg-[#0B1A4B] text-white font-semibold text-sm transition-all hover:bg-black disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20 active:scale-95"
         >
           {loading ? <Loader2 className="animate-spin" size={18} /> : (tab === 'email' ? 'Create Account' : 'Send OTP')}
         </button>
@@ -143,18 +148,27 @@ const Register = () => {
 
       <div className="mt-8 text-center text-[13px] font-medium text-gray-600">
         Already have an account?{' '}
-        <Link to="/auth/login" className="text-[#0B1A4B] font-semibold hover:underline">
-          Login
-        </Link>
+        {isModal ? (
+          <button 
+            onClick={() => switchAuthView('login')}
+            className="text-[#0B1A4B] font-semibold hover:underline"
+          >
+            Login
+          </button>
+        ) : (
+          <Link to="/auth/login" className="text-[#0B1A4B] font-semibold hover:underline">
+            Login
+          </Link>
+        )}
       </div>
 
-      <div className="mt-8 flex items-center gap-4">
+      <div className="mt-6 flex items-center gap-4">
         <div className="flex-1 h-px bg-gray-200"></div>
-        <span className="text-[12px] font-medium text-gray-400">Or continue with</span>
+        <span className="text-[12px] font-medium text-gray-400 uppercase tracking-widest">Or continue with</span>
         <div className="flex-1 h-px bg-gray-200"></div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-5 flex flex-col gap-3">
         <a 
           href="http://localhost:5000/auth/google"
           className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700"
@@ -164,7 +178,7 @@ const Register = () => {
         </a>
         <a 
           href="#"
-          className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-[#1877F2]/5 hover:border-[#1877F2]/30 transition-colors text-sm font-semibold text-gray-700"
+          className="w-full flex items-center justify-center gap-3 py-3 border border-gray-200 rounded-[12px] hover:bg-[#1877F2]/5 hover:border-[#1877F2]/30 transition-colors text-sm font-semibold text-gray-700 opacity-50 cursor-not-allowed"
         >
           <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" className="w-5 h-5" />
           Facebook

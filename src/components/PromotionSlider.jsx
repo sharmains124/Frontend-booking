@@ -36,28 +36,28 @@ const PromotionSlider = ({ promos }) => {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Left Arrow */}
+      {/* Left Arrow - Hidden on Mobile */}
       <button
         onClick={prev}
-        className="absolute -left-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+        className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 shadow-premium flex items-center justify-center hover:bg-gray-50 transition-all hidden md:flex"
       >
-        <ChevronLeft size={20} className="text-gray-600" />
+        <ChevronLeft size={18} className="text-slate-600" />
       </button>
 
       {/* Slider viewport */}
-      <div className="overflow-hidden rounded-xl">
+      <div className="overflow-visible md:overflow-hidden px-4 md:px-0">
         <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentIndex * (100 / slidesPerView)}%)` }}
+          className="flex transition-transform duration-500 ease-in-out hide-scrollbar overflow-x-auto md:overflow-x-visible snap-x"
+          style={{ transform: window.innerWidth >= 768 ? `translateX(-${currentIndex * (100 / slidesPerView)}%)` : 'none' }}
         >
           {promos.map((promo, i) => (
             <div
               key={i}
-              className="flex-shrink-0 px-2"
-              style={{ width: `${100 / slidesPerView}%` }}
+              className="flex-shrink-0 px-1.5 md:px-2 snap-center"
+              style={{ width: window.innerWidth >= 768 ? `${100 / slidesPerView}%` : '85%' }}
             >
               {/* Card — matches Agoda screenshot proportions */}
-              <div className="relative h-[220px] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer group border border-gray-100">
+              <div className="relative h-[180px] md:h-[220px] rounded-2xl md:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 cursor-pointer group border border-gray-100">
 
                 {/* Background image */}
                 <img
@@ -67,32 +67,27 @@ const PromotionSlider = ({ promos }) => {
                 />
 
                 {/* Dark gradient for readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                 {/* Top left — hotel icon */}
-                <div className="absolute top-3 left-3 w-8 h-8 bg-white rounded-lg shadow flex items-center justify-center">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#ef4444">
+                <div className="absolute top-3 left-3 w-7 h-7 md:w-8 md:h-8 bg-white/90 backdrop-blur-sm rounded-lg shadow flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill={promo.iconColor || "#3b82f6"}>
                     <path d="M3 21V7l9-4 9 4v14H3zm6-2h6V14H9v5zm6-7V9H9v3h6z" />
                   </svg>
                 </div>
 
                 {/* Top center — flag + country badge */}
-                <div className="absolute top-3 left-0 right-0 flex justify-center">
-                  <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                    <span className="text-base leading-none">{promo.flag}</span>
-                    <span className="text-[11px] font-bold text-gray-700">{promo.badge}</span>
+                <div className="absolute top-3 right-3 flex justify-center">
+                  <div className="flex items-center gap-1.5 bg-black/40 backdrop-blur-md rounded-full px-2.5 py-1 shadow-sm border border-white/10">
+                    <span className="text-xs md:text-sm leading-none">{promo.flag}</span>
+                    <span className="text-[10px] md:text-[11px] font-black text-white/90 uppercase tracking-widest">{promo.badge}</span>
                   </div>
                 </div>
 
-                {/* Center logo/watermark removed as requested */}
-
                 {/* Bottom — discount text */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  <p className="text-2xl font-black leading-tight drop-shadow-md" dangerouslySetInnerHTML={{ __html: promo.title }} />
-                  <p className="text-[11px] font-semibold text-white/90 mt-0.5 drop-shadow">{promo.subtitle}</p>
-                  {promo.terms && (
-                    <p className="text-[9px] text-white/50 mt-0.5">{promo.terms}</p>
-                  )}
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 text-white">
+                  <p className="text-lg md:text-2xl font-black leading-tight tracking-tight" dangerouslySetInnerHTML={{ __html: promo.title }} />
+                  <p className="text-[10px] md:text-[11px] font-bold text-white/70 mt-1 uppercase tracking-widest leading-none">{promo.subtitle}</p>
                 </div>
               </div>
             </div>
@@ -100,12 +95,12 @@ const PromotionSlider = ({ promos }) => {
         </div>
       </div>
 
-      {/* Right Arrow */}
+      {/* Right Arrow - Hidden on Mobile */}
       <button
         onClick={next}
-        className="absolute -right-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
+        className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white border border-gray-100 shadow-premium flex items-center justify-center hover:bg-gray-50 transition-all hidden md:flex"
       >
-        <ChevronRight size={20} className="text-gray-600" />
+        <ChevronRight size={18} className="text-slate-600" />
       </button>
 
       {/* Dot indicators */}

@@ -57,44 +57,47 @@ const TrainResultsHeader = ({ from: fromProp, to: toProp, date: dateProp, passen
   };
 
   return (
-    <div className="bg-[#f2f2f2] border-b border-gray-200 sticky top-[80px] z-[1000] py-3 shadow-md">
-      <div className="max-w-7xl mx-auto px-4">
+    <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-[80px] z-[1000] py-4 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
 
         {/* Main Search Row */}
-        <div className="flex items-center gap-1.5 relative" ref={dropdownRef}>
+        <div className="flex items-center gap-3 relative" ref={dropdownRef}>
 
           {/* FROM */}
           <div
-            className="flex-1 bg-white rounded-lg border border-gray-200 px-4 py-2 cursor-pointer flex flex-col justify-center h-[55px] hover:border-emerald-400 transition-colors"
+            className={`flex-1 bg-gray-50/50 rounded-2xl border border-gray-100 px-5 py-3 cursor-pointer flex flex-col justify-center h-[65px] transition-all hover:bg-white hover:border-blue-300 hover:shadow-md ${activeDropdown === 'from' ? 'bg-white border-blue-500 ring-2 ring-blue-500/10' : ''}`}
             onClick={() => { setActiveDropdown('from'); setQuery(''); }}
           >
-            <span className="text-[10px] font-black text-gray-500 uppercase mb-0.5">From</span>
-            <span className="text-[14px] font-black text-gray-900 truncate">{from.name}</span>
+            <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">From</span>
+            <span className="text-[17px] font-black text-slate-900 truncate tracking-tight">{from.name} <span className="text-gray-400 font-bold ml-1">[{from.code}]</span></span>
           </div>
 
           {/* Swap */}
           <button
-            className="z-10 -mx-3 w-7 h-7 bg-white rounded-full border border-gray-200 flex items-center justify-center text-emerald-600 shadow-sm hover:shadow-md transition-shadow active:scale-90"
+            className="z-10 -mx-5 w-10 h-10 bg-white rounded-full border border-gray-100 flex items-center justify-center text-blue-600 shadow-lg hover:shadow-xl transition-all active:scale-90 hover:scale-110"
             onClick={() => { const tmp = from; setFrom(to); setTo(tmp); }}
           >
-            <ArrowLeftRight size={14} strokeWidth={3} />
+            <ArrowLeftRight size={18} strokeWidth={3} />
           </button>
 
           {/* TO */}
           <div
-            className="flex-1 bg-white rounded-lg border border-gray-200 px-4 py-2 cursor-pointer flex flex-col justify-center h-[55px] hover:border-emerald-400 transition-colors"
+            className={`flex-1 bg-gray-50/50 rounded-2xl border border-gray-100 px-5 py-3 cursor-pointer flex flex-col justify-center h-[65px] transition-all hover:bg-white hover:border-blue-300 hover:shadow-md ${activeDropdown === 'to' ? 'bg-white border-blue-500 ring-2 ring-blue-500/10' : ''}`}
             onClick={() => { setActiveDropdown('to'); setQuery(''); }}
           >
-            <span className="text-[10px] font-black text-gray-500 uppercase mb-0.5">To</span>
-            <span className="text-[14px] font-black text-gray-900 truncate">{to.name}</span>
+            <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">To</span>
+            <span className="text-[17px] font-black text-slate-900 truncate tracking-tight">{to.name} <span className="text-gray-400 font-bold ml-1">[{to.code}]</span></span>
           </div>
 
           {/* Date */}
-          <div className="w-44 bg-white rounded-lg border border-gray-200 px-4 py-2 cursor-pointer flex flex-col justify-center h-[55px] hover:border-emerald-400 transition-colors relative">
-            <span className="text-[10px] font-black text-gray-500 uppercase mb-0.5">Travel Date</span>
-            <span className="text-[14px] font-black text-gray-900">
-              {new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: '2-digit' })}
-            </span>
+          <div className="w-52 bg-gray-50/50 rounded-2xl border border-gray-100 px-5 py-3 cursor-pointer flex flex-col justify-center h-[65px] transition-all hover:bg-white hover:border-blue-300 hover:shadow-md relative">
+            <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">Travel Date</span>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} className="text-blue-500" />
+              <span className="text-[17px] font-black text-slate-900 tracking-tight">
+                {new Date(date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
+            </div>
             <input
               type="date"
               value={date}
@@ -106,29 +109,35 @@ const TrainResultsHeader = ({ from: fromProp, to: toProp, date: dateProp, passen
 
           {/* Class */}
           <div
-            className="w-44 bg-white rounded-lg border border-gray-200 px-4 py-2 cursor-pointer flex flex-col justify-center h-[55px] hover:border-emerald-400 transition-colors"
+            className={`w-52 bg-gray-50/50 rounded-2xl border border-gray-100 px-5 py-3 cursor-pointer flex flex-col justify-center h-[65px] transition-all hover:bg-white hover:border-blue-300 hover:shadow-md ${activeDropdown === 'class' ? 'bg-white border-blue-500 ring-2 ring-blue-500/10' : ''}`}
             onClick={() => setActiveDropdown(activeDropdown === 'class' ? null : 'class')}
           >
-            <span className="text-[10px] font-black text-gray-500 uppercase mb-0.5">Class</span>
-            <span className="text-[13px] font-black text-gray-900 truncate">
-              {travelClass.split('(')[0].trim()}
-            </span>
+            <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">Class</span>
+            <div className="flex items-center justify-between">
+              <span className="text-[17px] font-black text-slate-900 truncate tracking-tight">
+                {travelClass.split('(')[0].trim()}
+              </span>
+              <ChevronDown size={16} className={`text-blue-500 transition-transform ${activeDropdown === 'class' ? 'rotate-180' : ''}`} />
+            </div>
           </div>
 
           {/* Passengers */}
-          <div className="w-28 bg-white rounded-lg border border-gray-200 px-4 py-2 cursor-pointer flex flex-col justify-center h-[55px] hover:border-emerald-400 transition-colors"
+          <div className={`w-32 bg-gray-50/50 rounded-2xl border border-gray-100 px-5 py-3 cursor-pointer flex flex-col justify-center h-[65px] transition-all hover:bg-white hover:border-blue-300 hover:shadow-md ${activeDropdown === 'pax' ? 'bg-white border-blue-500 ring-2 ring-blue-500/10' : ''}`}
             onClick={() => setActiveDropdown(activeDropdown === 'pax' ? null : 'pax')}
           >
-            <span className="text-[10px] font-black text-gray-500 uppercase mb-0.5">Passengers</span>
-            <span className="text-[14px] font-black text-gray-900">{passengers} Pax</span>
+            <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest mb-1">Pass.</span>
+            <div className="flex items-center gap-2">
+              <Users size={16} className="text-blue-500" />
+              <span className="text-[17px] font-black text-slate-900">{passengers} Pax</span>
+            </div>
           </div>
 
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 h-[55px] rounded-lg font-black text-base uppercase tracking-wider shadow-lg active:scale-95 transition-all"
+            className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white px-8 h-[65px] rounded-2xl font-black text-[16px] uppercase tracking-widest shadow-[0_10px_30px_-10px_rgba(37,99,235,0.4)] active:scale-95 transition-all hover:scale-[1.02]"
           >
-            Search
+            SEARCH
           </button>
 
           {/* Dropdowns */}

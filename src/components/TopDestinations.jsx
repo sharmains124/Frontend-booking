@@ -2,16 +2,16 @@ import React, { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const destinations = [
-  { id: 1,  name: 'Bangalore', properties: '5,372',  img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&q=80&w=400' },
-  { id: 2,  name: 'Mumbai',    properties: '4,177',  img: 'https://images.unsplash.com/photo-1562979314-bee7453e911c?auto=format&fit=crop&q=80&w=400' },
-  { id: 3,  name: 'Goa',       properties: '9,254',  img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=400' },
-  { id: 4,  name: 'New Delhi', properties: '12,786', img: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&q=80&w=400' },
-  { id: 5,  name: 'Hyderabad', properties: '2,735',  img: 'https://images.unsplash.com/photo-1534307671554-9a6d81f4d629?auto=format&fit=crop&q=80&w=400' },
-  { id: 6,  name: 'Chennai',   properties: '2,832',  img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&q=80&w=400' },
-  { id: 7,  name: 'Jaipur',    properties: '3,082',  img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80&w=400' },
-  { id: 8,  name: 'Varanasi',  properties: '2,000',  img: 'https://images.unsplash.com/photo-1561361058-c24cecae35ca?auto=format&fit=crop&q=80&w=400' },
-  { id: 9,  name: 'Kochi',     properties: '2,165',  img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80&w=400' },
-  { id: 10, name: 'Pune',      properties: '2,494',  img: 'https://images.unsplash.com/photo-1625218012620-25a0f7cd0d5b?auto=format&fit=crop&q=80&w=400' },
+  { id: 1,  name: 'Bangalore', properties: '5,372',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/4923/1_4923_02.jpg?ca=8&ce=1&s=345x345&ar=1x1' },
+  { id: 2,  name: 'Mumbai',    properties: '4,177',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/16850/1_16850_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 3,  name: 'Goa',       properties: '9,254',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/11304/077a5dc2a344a604731be86537916ba0.jpg?ce=0&s=345x345&ar=1x1' },
+  { id: 4,  name: 'New Delhi', properties: '12,786', img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/14552/1_14552_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 5,  name: 'Hyderabad', properties: '2,735',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/8801/1_8801_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 6,  name: 'Chennai',   properties: '2,832',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/17269/1_17269_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 7,  name: 'Jaipur',    properties: '3,082',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/8845/017f7c5548e391397f2be20f88df0b2c.jpg?ce=0&s=345x345&ar=1x1' },
+  { id: 8,  name: 'Varanasi',  properties: '2,000',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/3005/1_3005_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 9,  name: 'Kochi',     properties: '2,165',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/12722/1_12722_02.jpg?ca=6&ce=1&s=345x345&ar=1x1' },
+  { id: 10, name: 'Pune',      properties: '2,494',  img: 'https://images.weserv.nl/?url=https://pix6.agoda.net/geo/city/16854/0abc435fa78c2ca6fb4cb5ec86af89d0.jpg?ce=0&s=345x345&ar=1x1' },
 ];
 
 const TopDestinations = () => {
@@ -120,7 +120,7 @@ const TopDestinations = () => {
                 />
                 {/* Property count badge */}
                 <div className="absolute bottom-3 left-0 right-0 text-center">
-                  <span className="text-white text-xs font-medium opacity-90">
+                  <span className="bg-black/40 backdrop-blur-sm text-white text-[10px] md:text-xs font-semibold px-3 py-1 rounded-full border border-white/20">
                     {dest.properties} stays
                   </span>
                 </div>

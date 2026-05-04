@@ -4,30 +4,30 @@ import { ChevronLeft, ChevronRight, Zap, ShieldCheck, Star, Gift } from 'lucide-
 const PROMO_DATA = [
   {
     id: 1,
-    icon: <div className="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-white shrink-0"><Zap size={22} /></div>,
-    title: 'Tatkal Booking Now Open!',
-    desc: 'Book Tatkal tickets instantly — confirmed in under 60 seconds',
+    icon: <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20"><Zap size={24} /></div>,
+    title: 'Tatkal Express Booking',
+    desc: 'Confirm tickets in under 60 seconds with our high-speed API',
     bg: 'bg-white',
   },
   {
     id: 2,
-    icon: <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0"><ShieldCheck size={22} /></div>,
-    title: 'Travel Insurance at ₹99',
-    desc: 'Protect your journey with comprehensive train travel insurance',
+    icon: <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-indigo-500/20"><ShieldCheck size={24} /></div>,
+    title: 'Elite Trip Protection',
+    desc: 'Premium insurance coverage for all your railway journeys',
     bg: 'bg-white',
   },
   {
     id: 3,
-    icon: <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-white shrink-0"><Star size={22} /></div>,
-    title: 'Earn 2x Reward Points',
-    desc: 'On all train bookings this week with your WingTrip account',
+    icon: <div className="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20"><Star size={24} /></div>,
+    title: 'Double Reward Points',
+    desc: 'Earn 2x W-Points on every AC class booking this month',
     bg: 'bg-white',
   },
   {
     id: 4,
-    icon: <div className="w-12 h-12 rounded-full bg-violet-600 flex items-center justify-center text-white shrink-0"><Gift size={22} /></div>,
-    title: 'Free Meal Combos Available',
-    desc: 'Order railway meals directly from selected IRCTC partners',
+    icon: <div className="w-14 h-14 rounded-2xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-500/20"><Gift size={24} /></div>,
+    title: 'Dining on Rails',
+    desc: 'Pre-book gourmet meal combos from IRCTC-authorized partners',
     bg: 'bg-white',
   },
 ];
@@ -46,34 +46,36 @@ const TrainPromoSlider = () => {
   };
 
   return (
-    <div className="relative group mb-8">
+    <div className="relative group mb-10">
       <button
         onClick={() => scroll('left')}
-        className="absolute left-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+        className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-xl border border-gray-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
       >
-        <ChevronLeft size={20} strokeWidth={3} />
+        <ChevronLeft size={24} strokeWidth={3} />
       </button>
 
       <button
         onClick={() => scroll('right')}
-        className="absolute right-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-all opacity-0 group-hover:opacity-100"
+        className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white shadow-xl border border-gray-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100"
       >
-        <ChevronRight size={20} strokeWidth={3} />
+        <ChevronRight size={24} strokeWidth={3} />
       </button>
 
       <div
         ref={scrollRef}
-        className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-2 px-1"
+        className="flex items-center gap-6 overflow-x-auto scrollbar-hide py-4 px-1"
       >
         {PROMO_DATA.map((promo) => (
           <div
             key={promo.id}
-            className="flex items-center gap-4 p-4 min-w-[340px] md:min-w-[380px] bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group/card"
+            className="flex items-center gap-5 p-6 min-w-[360px] md:min-w-[400px] bg-white rounded-3xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all duration-500 cursor-pointer group/card hover:-translate-y-1"
           >
-            {promo.icon}
+            <div className="transition-transform duration-500 group-hover/card:scale-110">
+               {promo.icon}
+            </div>
             <div className="flex flex-col min-w-0">
-              <h4 className="text-[13px] font-black text-gray-900 truncate tracking-tight">{promo.title}</h4>
-              <p className="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-tight line-clamp-1">{promo.desc}</p>
+              <h4 className="text-[15px] font-black text-slate-800 truncate tracking-tight">{promo.title}</h4>
+              <p className="text-[12px] font-bold text-gray-500 mt-1.5 uppercase tracking-tight line-clamp-1 italic">{promo.desc}</p>
             </div>
           </div>
         ))}

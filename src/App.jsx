@@ -1,5 +1,6 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import PageLoader from './components/PageLoader';
 
 // Layouts
 import MainLayout from './layout/MainLayout';
@@ -12,11 +13,20 @@ import BookingPage from './pages/BookingPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import UXBreakdown from './pages/UXBreakdown';
-import { BusPage } from './pages/ServicePlaceholders';
+import BusRoot from './pages/Bus/BusRoot';
 import TrainsRoot from './pages/trains/TrainsRoot';
 import HotelsRoot from './pages/hotels/HotelsRoot';
 import ProfilePage from './pages/ProfilePage';
 import Support from './components/Support';
+import OffersRoot from './pages/offers/OffersRoot';
+import DestinationsRoot from './pages/destinations/DestinationsRoot';
+
+// Profile Dropdown Pages
+import MyTrips from './pages/auth/MyTrips';
+import Wallet from './pages/auth/Wallet';
+import Settings from './pages/auth/Settings';
+import Security from './pages/auth/Security';
+import MyAccount from './pages/auth/MyAccount';
 
 // Auth Pages
 import Login from './pages/auth/Login';
@@ -27,11 +37,30 @@ import OtpVerify from './pages/auth/OtpVerify';
 import GoogleLoginSuccess from './pages/auth/GoogleLoginSuccess';
 import { Toaster } from 'react-hot-toast';
 
+// ─── Loader duration (ms) ───────────────────────────────────
+const LOADER_DURATION = 900;
+
 function App() {
+  const location = useLocation();
+
+  // Only show loader on initial visit
+  const [loading, setLoading] = useState(true);
+
+  // Initial load
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setLoading(false);
+    }, LOADER_DURATION);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <>
+      {/* Loader renders on top for initial load */}
+      <PageLoader isLoading={loading} />
       <Toaster position="top-center" reverseOrder={false} />
-      <Routes>
+
+      <Routes location={location}>
         {/* Main Pages with Header & Footer */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
@@ -40,10 +69,17 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/ux-analysis" element={<UXBreakdown />} />
-          <Route path="/bus" element={<BusPage />} />
+          <Route path="/bus/*" element={<BusRoot />} />
           <Route path="/trains/*" element={<TrainsRoot />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/offers/*" element={<OffersRoot />} />
+          <Route path="/destinations/*" element={<DestinationsRoot />} />
+          <Route path="/my-trips" element={<MyTrips />} />
+          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/security" element={<Security />} />
+          <Route path="/account" element={<MyAccount />} />
         </Route>
 
         {/* Checkout/Booking Page without standard Header/Footer */}

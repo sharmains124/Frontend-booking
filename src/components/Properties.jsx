@@ -4,51 +4,28 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const properties = [
   {
     id: 1,
-    img: "https://images.unsplash.com/photo-1613490901509-f31623588231?w=600&auto=format&fit=crop&q=80",
-    alt: "Modern Luxury Villa",
-    name: "Modern Luxury Villa",
-    location: "Goa, India",
-    price: "₹12,500/night"
+    img: "https://images.weserv.nl/?url=https://cdn6.agoda.net/images/WebCampaign/20260203_accor/home_banner_web/en-us.png",
+    alt: "Accor Hotels - Discover Hotels"
   },
   {
     id: 2,
-    img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&auto=format&fit=crop&q=80",
-    alt: "Beachfront Paradise",
-    name: "Beachfront Paradise",
-    location: "Maldives",
-    price: "₹28,000/night"
+    img: "https://images.weserv.nl/?url=https://cdn6.agoda.net/images/WebCampaign/20260225_radisson/home_banner_web/en-us.png",
+    alt: "Radisson Hotels - Enjoy Memorable Moments"
   },
   {
     id: 3,
-    img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80",
-    alt: "Elite Private House",
-    name: "Elite Private House",
-    location: "Shimla, India",
-    price: "₹9,800/night"
+    img: "https://images.weserv.nl/?url=https://cdn6.agoda.net/images/WebCampaign/20260401_in_wyndham/home_banner_web/en-us.png",
+    alt: "Wyndham Hotels - Stay Made Simple"
   },
   {
     id: 4,
-    img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=80",
-    alt: "Designer Apartment",
-    name: "Designer Apartment",
-    location: "Mumbai, India",
-    price: "₹6,500/night"
+    img: "https://images.weserv.nl/?url=https://cdn6.agoda.net/images/WebCampaign/20251119_uk_clermont/home_banner_web/en-us.png",
+    alt: "Clermont Hotels - Great Stays"
   },
   {
     id: 5,
-    img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=600&auto=format&fit=crop&q=80",
-    alt: "Grand Estate",
-    name: "Grand Estate",
-    location: "Jaipur, India",
-    price: "₹18,000/night"
-  },
-  {
-    id: 6,
-    img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&auto=format&fit=crop&q=80",
-    alt: "Mountain Retreat",
-    name: "Mountain Retreat",
-    location: "Manali, India",
-    price: "₹7,200/night"
+    img: "https://images.weserv.nl/?url=https://cdn6.agoda.net/images/WebCampaign/20250903_th_absolute/home_banner_web/en-us.png",
+    alt: "Absolute Hotels - Luxury Experience"
   }
 ];
 
@@ -77,7 +54,7 @@ const PremiumCollections = () => {
         }
         updateArrows();
       }
-    }, 3500);
+    }, 4500);
     return () => clearInterval(interval);
   }, [isHovered]);
 
@@ -96,64 +73,50 @@ const PremiumCollections = () => {
   };
 
   return (
-    <div className="space-y-8 pb-20 mt-8 w-full font-sans">
+    <div className="space-y-8 pb-16 mt-6 w-full font-sans">
       <section
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        className="px-4 md:px-0"
       >
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-2xl md:text-[28px] font-bold text-[#1a1a1a]">
+            <h2 className="text-2xl md:text-[32px] font-bold text-[#1a1a1a] tracking-tight">
               Properties we think you'll like
             </h2>
-            <p className="text-gray-500 text-sm mt-0.5">Handpicked stays for every traveller</p>
+            <p className="text-gray-500 text-base mt-1">Handpicked brand deals for your next stay</p>
           </div>
-          <button className="text-[#e03a3c] font-semibold hover:underline flex items-center gap-1 text-sm hidden md:flex">
+          <button className="text-[#e03a3c] font-bold hover:underline py-2 rounded-full flex items-center gap-1 text-sm shadow-sm px-4 border border-[#e03a3c] bg-white transition-all">
             View all <ChevronRight size={16} />
           </button>
         </div>
 
-        <div className="relative">
+        <div className="relative group/container">
           <div
             ref={scrollRef}
             onScroll={updateArrows}
-            className="flex overflow-x-auto gap-4 snap-x snap-mandatory pb-2"
+            className="flex overflow-x-auto gap-5 snap-x snap-mandatory pb-6 px-1 hide-scrollbar"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {properties.map((prop) => (
               <div
                 key={prop.id}
-                className="flex flex-col shrink-0 snap-start cursor-pointer group/card"
-                style={{ width: '280px', minWidth: '280px' }}
+                className="relative flex shrink-0 snap-start cursor-pointer group/card rounded-[20px] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+                style={{ width: '380px', minWidth: '380px', height: '175px' }}
               >
                 {/* Image */}
-                <div
-                  className="relative w-full overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow"
-                  style={{ height: '180px' }}
-                >
-                  <img
-                    src={prop.img}
-                    alt={prop.alt}
-                    referrerPolicy="no-referrer"
-                    crossOrigin="anonymous"
-                    className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.style.display = 'none';
-                      e.target.parentElement.style.background = 'linear-gradient(135deg, #f0f4f8, #d9e2ec)';
-                    }}
-                  />
-                  {/* Price Tag */}
-                  <div className="absolute bottom-2 right-2 bg-white/95 text-[#1a1a1a] text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
-                    {prop.price}
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="mt-2.5 px-0.5">
-                  <h3 className="text-[#1a1a1a] text-sm font-bold leading-tight">{prop.name}</h3>
-                  <p className="text-gray-500 text-xs mt-0.5">{prop.location}</p>
-                </div>
+                <img
+                  src={prop.img}
+                  alt={prop.alt}
+                  referrerPolicy="no-referrer"
+                  crossOrigin="anonymous"
+                  className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    e.target.parentElement.style.background = 'linear-gradient(135deg, #f0f4f8, #d9e2ec)';
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -161,19 +124,17 @@ const PremiumCollections = () => {
           {/* Left Arrow */}
           <button
             onClick={scrollLeft}
-            className="absolute left-0 top-[45%] -translate-y-1/2 -translate-x-3 w-9 h-9 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#e03a3c] hover:border-[#e03a3c] transition-all z-10"
-            style={{ opacity: showLeft ? 1 : 0, pointerEvents: showLeft ? 'auto' : 'none' }}
+            className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-11 h-11 bg-white rounded-full shadow-xl border border-gray-100 flex items-center justify-center text-gray-700 hover:text-[#e03a3c] transition-all z-20 ${showLeft ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={24} strokeWidth={2.5} />
           </button>
 
           {/* Right Arrow */}
           <button
             onClick={scrollRight}
-            className="absolute right-0 top-[45%] -translate-y-1/2 translate-x-3 w-9 h-9 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-[#e03a3c] hover:border-[#e03a3c] transition-all z-10"
-            style={{ opacity: showRight ? 1 : 0, pointerEvents: showRight ? 'auto' : 'none' }}
+            className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-11 h-11 bg-white rounded-full shadow-xl border border-gray-100 flex items-center justify-center text-gray-700 hover:text-[#e03a3c] transition-all z-20 ${showRight ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'}`}
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={24} strokeWidth={2.5} />
           </button>
         </div>
       </section>

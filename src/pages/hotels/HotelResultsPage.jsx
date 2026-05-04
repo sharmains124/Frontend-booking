@@ -5,7 +5,6 @@ import HotelCard from './components/HotelCard';
 import HotelSearchHeader from './components/HotelSearchHeader';
 import HotelFilters from './components/HotelFilters';
 import HotelSortOptions from './components/HotelSortOptions';
-import HotelPromoSlider from './components/HotelPromoSlider';
 
 import { hotelService } from '../../services/hotelService';
 import { toast } from 'react-hot-toast';
@@ -74,35 +73,34 @@ const HotelResultsPage = () => {
 
       <div className="max-w-7xl mx-auto px-6 pt-28 pb-10">
 
-        {/* Title + Live Badge */}
-        <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-              Hotels, Homestays and more in {destination}
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{adults} Guest{adults > 1 ? 's' : ''}</span>
-              <div className="w-1 h-1 rounded-full bg-gray-300" />
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{rooms} Room{rooms > 1 ? 's' : ''}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-green-600 font-bold text-[10px] uppercase tracking-widest bg-white p-2 rounded-xl border border-gray-100 shadow-sm">
-              <ShieldCheck size={12} /> Real-time availability
-            </div>
-            <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-[12px] font-black text-blue-600 shadow-sm hover:shadow-md transition-all">
-              <MapIcon size={14} /> VIEW ON MAP
-            </button>
-          </div>
-        </div>
-
-        {/* Promo Slider */}
-        <HotelPromoSlider />
-
         <div className="flex flex-col lg:flex-row gap-8">
           <HotelFilters destination={destination} />
 
-          <main className="lg:w-3/4">
+          <main className="lg:w-3/4 min-w-0">
+             
+             {/* Breadcrumbs */}
+             <div className="flex items-center gap-2 text-[11px] text-gray-500 font-medium mb-4">
+                <span className="hover:text-[#008cff] cursor-pointer">Home</span>
+                <span>›</span>
+                <span className="text-gray-400">Hotels and more in {destination}</span>
+             </div>
+
+             {/* Main Title Section */}
+             <div className="mb-6 mt-1 flex flex-wrap items-center gap-3">
+               <h1 className="text-2xl md:text-[28px] font-black text-[#000] tracking-tight">
+                 {hotels.length} Properties in {destination}
+               </h1>
+               <button className="flex items-center gap-1.5 bg-white border border-blue-100 px-3 py-1 rounded-full text-[11px] font-bold text-[#008cff] hover:bg-blue-50 transition-colors shadow-sm">
+                 <Sparkles size={14} className="fill-blue-100" /> Explore Travel Tips →
+               </button>
+             </div>
+
+             {/* Recently Viewed Placeholder */}
+             <div className="mb-6">
+                <h3 className="text-[20px] font-black text-[#000] tracking-tight mb-4">Recently Viewed</h3>
+                {/* We won't add cards here unless data exists, but the header matches the screenshot */}
+             </div>
+
             <HotelSortOptions activeSort={activeSort} setActiveSort={setActiveSort} />
 
             <h2 className="text-[12px] font-black text-gray-800 mb-6 px-1 tracking-tight">Hotels sorted by Recommended</h2>

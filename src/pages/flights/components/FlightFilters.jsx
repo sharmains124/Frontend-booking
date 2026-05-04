@@ -4,22 +4,43 @@ import { ShieldCheck } from 'lucide-react';
 const FlightFilters = ({ flightsCount }) => {
   return (
     <aside className="lg:w-1/4 space-y-6">
-      {/* Search Result Summary Section (Top of sidebar) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-         <div className="flex items-center justify-between mb-4">
-            <h3 className="font-black text-[14px] text-gray-800 uppercase tracking-tight">Your Search</h3>
-            <button className="text-[10px] font-bold text-blue-600 uppercase hover:underline">Clear all</button>
+      {/* Applied Filters */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+         <div className="flex items-center justify-between mb-3">
+            <h3 className="font-black text-[16px] text-[#000] tracking-tight">Applied Filters</h3>
+            <button className="text-[12px] font-black text-[#008cff]">Clear All</button>
          </div>
-         <div className="space-y-3">
-            <div className="flex items-center justify-between">
-               <span className="text-xs font-bold text-gray-500">Available Flights</span>
-               <span className="text-xs font-black text-gray-800 tracking-widest">{flightsCount}</span>
+         <div className="flex flex-wrap gap-2">
+            <div className="bg-white border border-gray-200 flex items-center justify-between px-2 py-1.5 rounded-md text-[12px] font-bold text-gray-700 shadow-sm w-max cursor-pointer hover:bg-gray-50 transition-colors">
+               Non Stop <span className="ml-2 text-gray-500 font-normal text-sm leading-none flex items-center">×</span>
             </div>
-            <label className="flex items-center gap-3 cursor-pointer group">
-               <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-0" />
-               <span className="text-xs font-bold text-gray-600 group-hover:text-gray-900 flex-1">One-stop or more</span>
-               <span className="text-[10px] font-black text-gray-400">₹4,200</span>
-            </label>
+         </div>
+      </div>
+
+      {/* Smart Filters */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+         <div className="flex items-center gap-1.5 mb-3">
+            <div className="text-[#008cff]"><ShieldCheck size={18} className="fill-[#e5f3ff]" strokeWidth={1.5} /></div>
+            <div>
+              <h3 className="font-black text-[16px] text-[#000] tracking-tight leading-tight">Smart Filters</h3>
+              <p className="text-[10px] text-gray-500 font-bold tracking-tight">Powered by Myra.Ai</p>
+            </div>
+         </div>
+         <div className="relative mb-3">
+            <input type="text" placeholder="What are you looking for ?" className="w-full bg-[#f9f9f9] rounded-md py-2.5 px-3 text-[12px] font-medium outline-none border-0 text-gray-800 placeholder-gray-400 font-sans" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 -rotate-45 text-gray-400">
+               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+            </div>
+         </div>
+         <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+             <button className="flex-shrink-0 bg-white border border-gray-200 text-gray-600 font-medium text-[11px] py-1.5 px-2.5 rounded-md hover:bg-gray-50 shadow-sm flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="6.5"></line></svg> 
+                Flights with check-in baggage
+             </button>
+             <button className="flex-shrink-0 bg-white border border-gray-200 text-gray-600 font-medium text-[11px] py-1.5 px-2.5 rounded-md hover:bg-gray-50 shadow-sm flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                Morning
+             </button>
          </div>
       </div>
 

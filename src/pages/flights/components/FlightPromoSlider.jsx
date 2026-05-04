@@ -1,33 +1,32 @@
 import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight, Plane, CreditCard, Star, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const PROMO_DATA = [
   {
     id: 1,
-    icon: <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-yellow-400 shrink-0"><Sparkles size={24} /></div>,
-    title: "For Your April Long Week...",
-    desc: "FLAT 10% OFF* on flights, using code EXPLORE2024",
+    icon: <div className="text-blue-900 font-extrabold italic tracking-tighter text-2xl shrink-0 w-12 h-12 flex items-center justify-center bg-white !border-0 rounded-full shadow-sm">VISA</div>,
+    title: "VISA Exclusive Offer",
+    desc: "Free Seat with VISA Signature Credit...",
     bg: "bg-white"
   },
   {
     id: 2,
-    icon: <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0"><CreditCard size={24} /></div>,
-    title: "Flat 10% Instant Discount...",
-    desc: "on IDFC FIRST Bank Credit Card EMI up to ₹2,500*",
+    icon: (
+      <div className="w-12 h-12 rounded-full bg-[#bd1023] flex items-center justify-center text-white shrink-0 font-bold text-xl">
+        <span className="w-4 h-5 block relative border-t-2 border-l-2 border-white">
+           <span className="absolute left-0 top-1/2 w-2.5 h-[2px] bg-white -translate-y-1/2"></span>
+        </span>
+      </div>
+    ),
+    title: "Flat 10% Instant Discount ...",
+    desc: "on IDFC FIRST Bank Credit Card EMI...",
     bg: "bg-white"
   },
   {
     id: 3,
-    icon: <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0"><Plane size={24} /></div>,
-    title: "Meet & Greet & Beyond...",
-    desc: "Elevate your travel experience with priority services",
-    bg: "bg-white"
-  },
-  {
-    id: 4,
-    icon: <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0"><Star size={24} /></div>,
-    title: "Unlock Elite Member Prices",
-    desc: "Save up to ₹1,500 on international flight bookings",
+    icon: <div className="w-12 h-12 rounded-full overflow-hidden shrink-0"><img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=150&q=80" alt="Meet & Greet" className="w-full h-full object-cover" /></div>,
+    title: "Meet and Greet & ...",
+    desc: "Elevate your travel experience with priority...",
     bg: "bg-white"
   }
 ];
@@ -47,36 +46,36 @@ const FlightPromoSlider = () => {
   };
 
   return (
-    <div className="relative group mb-8">
+    <div className="relative group w-full mb-4">
       {/* Navigation Buttons */}
       <button 
         onClick={() => scroll('left')}
-        className="absolute left-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100"
+        className="absolute left-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex flex-col items-center justify-center text-[#008cff] hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100"
       >
-        <ChevronLeft size={20} strokeWidth={3} />
+        <ChevronLeft size={20} strokeWidth={3} className="-ml-0.5" />
       </button>
 
       <button 
         onClick={() => scroll('right')}
-        className="absolute right-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 transition-all opacity-0 group-hover:opacity-100"
+        className="absolute right-[-15px] top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white shadow-lg border border-gray-100 flex flex-col items-center justify-center text-[#008cff] hover:bg-blue-50 transition-all opacity-100 md:opacity-0 group-hover:opacity-100"
       >
-        <ChevronRight size={20} strokeWidth={3} />
+        <ChevronRight size={20} strokeWidth={3} className="ml-0.5" />
       </button>
 
       {/* Slider Container */}
       <div 
         ref={scrollRef}
-        className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-2 px-1"
+        className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-1 pl-1 pr-6"
       >
         {PROMO_DATA.map((promo) => (
           <div 
             key={promo.id}
-            className="flex items-center gap-4 p-4 min-w-[340px] md:min-w-[380px] bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group/card"
+            className="flex items-center gap-3 p-3 min-w-[280px] md:min-w-[320px] bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer group/card"
           >
             {promo.icon}
             <div className="flex flex-col min-w-0">
-               <h4 className="text-[13px] font-black text-gray-900 truncate tracking-tight">{promo.title}</h4>
-               <p className="text-[11px] font-bold text-gray-500 mt-1 uppercase tracking-tight line-clamp-1">{promo.desc}</p>
+               <h4 className="text-[13px] font-black text-gray-900 truncate tracking-tight group-hover/card:text-[#008cff] transition-colors">{promo.title}</h4>
+               <p className="text-[11px] font-medium text-gray-600 mt-0.5 tracking-tight line-clamp-1">{promo.desc}</p>
             </div>
           </div>
         ))}

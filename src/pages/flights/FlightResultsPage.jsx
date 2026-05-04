@@ -8,9 +8,9 @@ import FlightFilters from './components/FlightFilters';
 import FlightPromoSlider from './components/FlightPromoSlider';
 
 const getMockFlights = (origin, destination, dateStr) => [
-  { id: '1', airline: 'IndiGo', flightNumber: '6E-201', departureTime: new Date(dateStr).setHours(6, 0), arrivalTime: new Date(dateStr).setHours(8, 15), originCode: origin, destCode: destination, price: 4120, seatsAvailable: 12, originCity: 'New Delhi', destCity: 'Mumbai' },
-  { id: '2', airline: 'Air India', flightNumber: 'AI-102', departureTime: new Date(dateStr).setHours(9, 30), arrivalTime: new Date(dateStr).setHours(11, 45), originCode: origin, destCode: destination, price: 5450, seatsAvailable: 24, originCity: 'New Delhi', destCity: 'Mumbai' },
-  { id: '3', airline: 'Vistara', flightNumber: 'UK-854', departureTime: new Date(dateStr).setHours(14, 15), arrivalTime: new Date(dateStr).setHours(16, 30), originCode: origin, destCode: destination, price: 6200, seatsAvailable: 5, originCity: 'New Delhi', destCity: 'Mumbai' }
+  { id: '1', airline: 'Akasa Air', flightNumber: 'QP-1324', departureTime: new Date(dateStr).setHours(6, 0), arrivalTime: new Date(dateStr).setHours(8, 15), originCode: origin, destCode: destination, price: 4120, seatsAvailable: 12, originCity: 'New Delhi', destCity: 'Bengaluru' },
+  { id: '2', airline: 'SpiceJet', flightNumber: 'SG-810', departureTime: new Date(dateStr).setHours(9, 30), arrivalTime: new Date(dateStr).setHours(11, 45), originCode: origin, destCode: destination, price: 5450, seatsAvailable: 24, originCity: 'New Delhi', destCity: 'Bengaluru' },
+  { id: '3', airline: 'IndiGo', flightNumber: '6E-452', departureTime: new Date(dateStr).setHours(14, 15), arrivalTime: new Date(dateStr).setHours(16, 30), originCode: origin, destCode: destination, price: 6200, seatsAvailable: 5, originCity: 'New Delhi', destCity: 'Bengaluru' }
 ];
 
 const FlightResultsPage = () => {
@@ -28,6 +28,10 @@ const FlightResultsPage = () => {
   const travelClass = searchParams.get('class') || 'Economy';
 
   const formattedDate = dateStr ? new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) : '18 Mar';
+
+  const cityMap = { DEL: 'New Delhi', BOM: 'Bengaluru', BLR: 'Bengaluru', CCU: 'Kolkata', HYD: 'Hyderabad', MAA: 'Chennai', GOI: 'Goa', JAI: 'Jaipur', PNQ: 'Pune' };
+  const originCity = cityMap[origin] || origin;
+  const destCity = cityMap[destination] || destination;
 
   // Generate Date Strip
   const dateStrip = Array.from({ length: 7 }, (_, i) => {
@@ -83,48 +87,44 @@ const FlightResultsPage = () => {
       />
 
       <div className="max-w-7xl mx-auto px-4 mt-6 pb-20">
-         {/* Main Title Section as per screenshot */}
-         <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-               <h1 className="text-2xl font-black text-gray-900 tracking-tight font-sans">
-                 Flights from {origin} to {destination}
-               </h1>
-               <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{passengers} Traveler</span>
-                  <div className="w-1 h-1 rounded-full bg-gray-300"></div>
-                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{travelClass} Class</span>
-               </div>
-            </div>
-            
-            <div className="flex items-center gap-4 bg-white p-2 rounded-xl border border-gray-100 shadow-sm animate-fade-in">
-               <div className="flex items-center gap-2 text-green-600 font-bold text-[10px] uppercase tracking-widest">
-                  <CheckCircle2 size={12} /> Real-time availability
-               </div>
-            </div>
-         </div>
-
-         <FlightPromoSlider />
-
-         {/* Date Slider Strip as per Agoda screenshot */}
-         <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
-           {dateStrip.map((item, i) => (
-             <div 
-               key={i}
-               className={`flex-1 min-w-[120px] p-2 rounded-lg border cursor-pointer transition-all text-center
-                 ${item.active 
-                   ? 'bg-blue-50 border-blue-600 shadow-sm scale-105' 
-                   : 'bg-white border-gray-100 hover:border-blue-400'}`}
-             >
-               <p className={`text-[10px] font-black uppercase ${item.active ? 'text-blue-600' : 'text-gray-500'}`}>{item.date}</p>
-               <p className={`text-[12px] font-black mt-0.5 ${item.active ? 'text-blue-600' : 'text-gray-400'}`}>{item.price}</p>
-             </div>
-           ))}
-         </div>
-
         <div className="flex flex-col lg:flex-row gap-8">
           <FlightFilters flightsCount={flights.length} />
 
-          <main className="lg:w-3/4">
+          <main className="lg:w-3/4 min-w-0">
+             
+             {/* Main Title Section */}
+             <div className="mb-3 mt-1">
+               <h1 className="text-2xl md:text-[26px] font-black text-[#000] tracking-tight whitespace-nowrap">
+                 Flights from {originCity} to {destCity}
+               </h1>
+             </div>
+
+             {/* Promo Slider Below Title */}
+             <div className="w-full min-w-0 mb-4">
+               <FlightPromoSlider />
+             </div>
+
+             {/* Date Slider Strip as per MakeMyTrip Screenshot */}
+             <div className="flex items-center gap-0 mb-5 overflow-x-auto scrollbar-hide bg-white rounded-md border border-gray-200 shadow-sm relative">
+               <button className="flex-shrink-0 w-8 flex items-center justify-center text-blue-500 hover:bg-gray-50 h-full absolute left-0 bg-white border-r border-gray-200 z-10"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23008cff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m15 18-6-6 6-6'/></svg>" className="w-4 h-4" alt="prev"/></button>
+               <div className="flex items-center ml-8 mr-8 w-full">
+                 {dateStrip.map((item, i) => (
+                   <div 
+                     key={i}
+                     className={`flex-1 min-w-[100px] py-1 px-2 border-r border-gray-200 last:border-r-0 cursor-pointer transition-all text-center relative
+                       ${item.active 
+                         ? 'bg-blue-50' 
+                         : 'bg-white hover:bg-gray-50'}`}
+                   >
+                     {item.active && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#008cff]"></div>}
+                     <p className={`text-[12px] font-bold ${item.active ? 'text-[#008cff]' : 'text-gray-900'}`}>{item.date}</p>
+                     <p className={`text-[11px] font-medium mt-0.5 ${item.active ? 'text-[#008cff]' : 'text-gray-500'}`}>{item.price}</p>
+                   </div>
+                 ))}
+               </div>
+               <button className="flex-shrink-0 w-8 flex items-center justify-center text-blue-500 hover:bg-gray-50 h-full absolute right-0 bg-white border-l border-gray-200 z-10"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23008cff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m9 18 6-6-6-6'/></svg>" className="w-4 h-4" alt="next"/></button>
+             </div>
+
              {/* Sort Options Bar as per screenshot */}
              <div className="flex flex-wrap lg:flex-nowrap gap-3 mb-4">
                 {[

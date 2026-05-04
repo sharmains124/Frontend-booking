@@ -5,7 +5,11 @@ const Hero = ({
   bgType = 'video', 
   bgUrl = '/assets/Destination video.mp4',
   animate = false,
-  isFlight = false
+  isFlight = false,
+  title,
+  subTitle,
+  hideSearchTabs = false,
+  initialTab
 }) => {
   return (
     <section className="relative min-h-[60vh] md:min-h-[600px] flex items-center justify-center pt-32 pb-20">
@@ -53,7 +57,9 @@ const Hero = ({
       <div className="container-custom relative z-20 text-center px-6 mt-0">
         <div className="mb-1 md:mb-2 max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-6xl lg:text-[75px] font-black text-white leading-tight tracking-tight mb-4 drop-shadow-2xl animate-fade-in-up delay-100">
-            {isFlight ? (
+            {title ? (
+              title
+            ) : isFlight ? (
               <>
                 Your <br className="md:hidden" />
                 <span className="decoration-primary/80 decoration-4 underline underline-offset-[12px]">Journey</span> Starts Here
@@ -67,7 +73,9 @@ const Hero = ({
           </h1>
           
           <p className="text-sm md:text-base lg:text-lg text-white/90 max-w-2xl mx-auto font-medium tracking-wide mb-8 drop-shadow-lg leading-relaxed animate-fade-in-up delay-200">
-            {isFlight ? (
+            {subTitle ? (
+              subTitle
+            ) : isFlight ? (
               <>
                 Precision-crafted travel experiences, engineered with discretion, <br className="hidden md:block" />
                 sophistication, and absolute excellence.
@@ -79,8 +87,8 @@ const Hero = ({
         </div>
 
         {/* Search Engine Integration */}
-        <div className="max-w-6xl mx-auto relative z-30 animate-fade-in-up delay-300 transform translate-y-4 pb-12">
-          <SearchForm />
+        <div className="max-w-[1200px] mx-auto relative z-30 pb-12 pt-4">
+          <SearchForm hideTabs={hideSearchTabs} initialTab={initialTab} />
         </div>
       </div>
 

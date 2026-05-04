@@ -193,7 +193,7 @@ const FlightResultsHeader = ({ origin, destination, date, passengers, travelClas
           {activeDropdown && (
             <div ref={dropdownRef} className="absolute top-[65px] z-[1001] animate-fade-in">
               {(activeDropdown === 'from' || activeDropdown === 'to') && (
-                <div className={`absolute ${activeDropdown === 'from' ? 'left-[130px]' : 'left-[350px]'} w-[400px] bg-white shadow-[0_20px_100px_rgba(0,0,0,0.35)] rounded-xl overflow-hidden border border-gray-100 flex flex-col`}>
+                <div className={`absolute ${activeDropdown === 'from' ? 'left-[130px]' : 'left-[350px]'} w-[400px] bg-white shadow-[0_1px_6px_0_rgba(0,0,0,0.2)] rounded-[8px] overflow-hidden border border-gray-100 flex flex-col animate-fade-in-up`}>
                    {/* Search Bar inside dropdown */}
                    <div className="p-4 border-b border-gray-100 flex items-center gap-3 bg-white">
                       <Search size={18} className="text-gray-400" />
@@ -239,7 +239,7 @@ const FlightResultsHeader = ({ origin, destination, date, passengers, travelClas
               )}
 
               {activeDropdown === 'calendar' && (
-                <div className="absolute left-[500px] bg-white shadow-[0_20px_100px_rgba(0,0,0,0.35)] rounded-xl overflow-hidden border border-gray-100 p-5 flex flex-col gap-4 min-w-[280px]">
+                <div className="absolute left-[500px] bg-white shadow-[0_1px_6px_0_rgba(0,0,0,0.2)] rounded-[8px] overflow-hidden border border-gray-100 p-5 flex flex-col gap-4 w-[400px] animate-fade-in-up">
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Depart Date</label>
                     <input
@@ -277,7 +277,7 @@ const FlightResultsHeader = ({ origin, destination, date, passengers, travelClas
               )}
 
               {activeDropdown === 'guests' && (
-                <div className="absolute right-0 shadow-[0_20px_100px_rgba(0,0,0,0.35)] rounded-xl overflow-hidden border border-gray-100">
+                <div className="absolute right-0 shadow-[0_1px_6px_0_rgba(0,0,0,0.2)] rounded-[8px] overflow-hidden border border-gray-100 w-[400px] animate-fade-in-up bg-white">
                   <GuestClassSelector 
                     guestData={guestData} 
                     onChange={setGuestData}
@@ -286,7 +286,7 @@ const FlightResultsHeader = ({ origin, destination, date, passengers, travelClas
               )}
 
               {activeDropdown === 'tripType' && (
-                <div className="absolute left-0 w-48 bg-white shadow-[0_10px_30px_rgba(0,0,0,0.1)] rounded-xl border border-gray-100 overflow-hidden">
+                <div className="absolute left-0 w-48 bg-white shadow-[0_1px_6px_0_rgba(0,0,0,0.2)] rounded-[8px] border border-gray-100 overflow-hidden animate-fade-in-up">
                   {['oneWay', 'roundTrip', 'multiCity'].map((type) => (
                     <div 
                       key={type}

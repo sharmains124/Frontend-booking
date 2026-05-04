@@ -5,6 +5,7 @@ import WhyChooseUs from '../components/WhyChooseUs';
 import Accommodation from '../components/Accommodation';
 import Properties from '../components/Properties';
 import FlightActive from '../components/FlightActive';
+import ExploreHotels from '../components/ExploreHotels';
 
 const HomePage = () => {
   return (
@@ -20,6 +21,7 @@ const HomePage = () => {
           <Accommodation />
           <FlightActive />
           <Properties />
+          <ExploreHotels />
         </div>
       </main>
     </div>

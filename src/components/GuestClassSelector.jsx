@@ -1,92 +1,136 @@
 import React from 'react';
-import { Plus, Minus } from 'lucide-react';
 
-const GuestClassSelector = ({ guestData, onChange, mode = 'flight' }) => {
-  const updateCount = (type, delta) => {
-    let minCount = 0;
-    if (type === 'adults') minCount = 1;
-    if (type === 'rooms') minCount = 1;
-    const newCount = Math.max(minCount, (guestData[type] || 0) + delta);
-    onChange({ ...guestData, [type]: newCount });
+const GuestClassSelector = ({ guestData, onChange, onClose }) => {
+  const updateCount = (type, value) => {
+    onChange({ ...guestData, [type]: value });
   };
 
   const updateClass = (className) => {
     onChange({ ...guestData, cabinClass: className });
   };
 
-  const items = mode === 'hotel'
-    ? [
-        { id: 'rooms', label: 'Rooms', sub: '' },
-        { id: 'adults', label: 'Adult', sub: '(18+ yrs)' },
-        { id: 'children', label: 'Children', sub: '(0-17 yrs)' }
-      ]
-    : [
-        { id: 'adults', label: 'Adult', sub: '(12yrs and above)' },
-        { id: 'children', label: 'Children', sub: '(2-11yrs)' },
-        { id: 'infants', label: 'Infants', sub: '(below 2yrs)' }
-      ];
+  const adultOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const childrenOptions = [0, 1, 2, 3, 4, 5, 6];
+  const infantOptions = [0, 1, 2, 3, 4, 5, 6];
 
-  const classes = ['Economy', 'Premium economy', 'Business', 'First'];
+  const travelClasses = ['Economy/Premium Economy', 'Premium Economy', 'Business', 'First Class'];
 
   return (
-    <div className="bg-white rounded-[12px] shadow-2xl p-6 w-[360px] border border-gray-100 animate-in fade-in zoom-in duration-300">
+    <div className="p-6 md:p-8 w-full animate-in fade-in zoom-in duration-300 bg-white">
       
-      {/* Passenger Counters */}
-      <div className="flex flex-col mb-6">
-        {items.map((item, index) => {
-          const count = guestData[item.id] || 0;
-          let isMin = false;
-          if (item.id === 'adults' || item.id === 'rooms') {
-            isMin = count <= 1;
-          } else {
-            isMin = count <= 0;
-          }
-          
-          return (
-            <div key={item.id} className={`flex items-center justify-between py-4 ${index !== items.length - 1 ? 'border-b border-gray-100' : ''}`}>
-              <button 
-                onClick={() => updateCount(item.id, -1)}
-                disabled={isMin}
-                className={`w-8 h-8 flex items-center justify-center transition-colors border rounded-lg ${isMin ? 'text-gray-200 border-gray-100 cursor-not-allowed' : 'text-primary border-gray-200 hover:bg-primary/5'}`}
+      {/* Adults */}
+      <div className="mb-6">
+        <h4 className="font-bold text-gray-700 text-[13px] tracking-wide mb-1">ADULTS (12y +)</h4>
+        <p className="text-[12px] text-gray-400 mb-3">on the day of travel</p>
+        <div className="flex items-center flex-wrap gap-y-2">
+          <div className="flex border border-gray-200 rounded-[4px] overflow-hidden">
+            {adultOptions.map((num) => (
+              <button
+                key={num}
+                onClick={() => updateCount('adults', num)}
+                className={`w-[38px] h-[38px] flex items-center justify-center text-[14px] font-bold border-r border-gray-200 last:border-r-0 transition-colors
+                  ${guestData.adults === num ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
               >
-                <span className="text-xl font-bold leading-none">-</span>
+                {num}
               </button>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-[22px] font-black text-blue-500">{count}</span>
-                <span className="text-[14px] font-bold text-gray-500 tracking-tight">
-                  {item.label}
-                </span>
-              </div>
-
-              <button 
-                onClick={() => updateCount(item.id, 1)}
-                className="w-8 h-8 flex items-center justify-center text-primary border border-gray-200 rounded-lg hover:bg-primary/5 transition-all active:scale-95"
-              >
-                <span className="text-xl font-bold leading-none">+</span>
-              </button>
-            </div>
-          );
-        })}
+            ))}
+          </div>
+          <button
+            onClick={() => updateCount('adults', 10)}
+            className={`w-[38px] h-[38px] ml-2 border border-gray-200 rounded-[4px] flex items-center justify-center text-[14px] font-bold transition-colors
+              ${guestData.adults > 9 ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+          >
+            &gt;9
+          </button>
+        </div>
       </div>
 
-      {/* Cabin Classes Grid (Hidden in hotel mode) */}
-      {mode !== 'hotel' && (
-        <div className="grid grid-cols-2 gap-3 mt-2">
-          {classes.map((cls) => (
+      {/* Children & Infants Row */}
+      <div className="flex flex-col md:flex-row gap-8 mb-8">
+        {/* Children */}
+        <div>
+          <h4 className="font-bold text-gray-700 text-[13px] tracking-wide mb-1">CHILDREN (2y - 12y )</h4>
+          <p className="text-[12px] text-gray-400 mb-3">on the day of travel</p>
+          <div className="flex items-center flex-wrap gap-y-2">
+            <div className="flex border border-gray-200 rounded-[4px] overflow-hidden">
+              {childrenOptions.map((num) => (
+                <button
+                  key={num}
+                  onClick={() => updateCount('children', num)}
+                  className={`w-[38px] h-[38px] flex items-center justify-center text-[14px] font-bold border-r border-gray-200 last:border-r-0 transition-colors
+                    ${guestData.children === num ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
             <button
-              key={cls}
-              onClick={() => updateClass(cls)}
-              className={`py-3 px-2 rounded-[4px] text-[13px] font-medium transition-colors border
-                ${guestData.cabinClass === cls 
-                  ? 'bg-[#4a85f6] hover:bg-blue-600 text-white border-[#4a85f6]' 
-                  : 'bg-white text-[#4a85f6] border-[#4a85f6] hover:bg-blue-50'}`}
+              onClick={() => updateCount('children', 7)}
+              className={`w-[38px] h-[38px] ml-2 border border-gray-200 rounded-[4px] flex items-center justify-center text-[14px] font-bold transition-colors
+                ${guestData.children > 6 ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
             >
-              {cls}
+              &gt;6
             </button>
-          ))}
+          </div>
         </div>
-      )}
+
+        {/* Infants */}
+        <div>
+          <h4 className="font-bold text-gray-700 text-[13px] tracking-wide mb-1">INFANTS (below 2y)</h4>
+          <p className="text-[12px] text-gray-400 mb-3">on the day of travel</p>
+          <div className="flex items-center flex-wrap gap-y-2">
+            <div className="flex border border-gray-200 rounded-[4px] overflow-hidden">
+              {infantOptions.map((num) => (
+                <button
+                  key={num}
+                  onClick={() => updateCount('infants', num)}
+                  className={`w-[38px] h-[38px] flex items-center justify-center text-[14px] font-bold border-r border-gray-200 last:border-r-0 transition-colors
+                    ${guestData.infants === num ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => updateCount('infants', 7)}
+              className={`w-[38px] h-[38px] ml-2 border border-gray-200 rounded-[4px] flex items-center justify-center text-[14px] font-bold transition-colors
+                ${guestData.infants > 6 ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+            >
+              &gt;6
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Travel Class */}
+      <div className="mb-10">
+        <h4 className="font-bold text-gray-700 text-[13px] tracking-wide mb-3">CHOOSE TRAVEL CLASS</h4>
+        <div className="flex flex-wrap border border-gray-200 rounded-[4px] overflow-hidden w-fit">
+          {travelClasses.map((cls) => {
+            const isSelected = guestData.cabinClass === cls || (guestData.cabinClass === 'Economy' && cls === 'Economy/Premium Economy');
+            return (
+              <button
+                key={cls}
+                onClick={() => updateClass(cls)}
+                className={`px-4 py-2.5 text-[13px] font-medium border-r border-gray-200 last:border-r-0 transition-colors
+                  ${isSelected ? 'bg-[#008cff] text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+              >
+                {cls}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Apply Button */}
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={onClose}
+          className="bg-[#008cff] hover:bg-blue-600 text-white px-10 py-2.5 rounded-full font-bold text-[14px] tracking-wide transition-colors shadow-md active:scale-95"
+        >
+          APPLY
+        </button>
+      </div>
     </div>
   );
 };

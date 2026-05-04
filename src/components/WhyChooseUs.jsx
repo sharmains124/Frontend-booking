@@ -3,29 +3,29 @@ import { ShieldCheck, Tags, HandCoins, Info } from 'lucide-react';
 
 const WhyChooseUs = () => {
   return (
-    <section className="max-w-7xl mx-auto px-4 w-full mb-12 font-sans">
-       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8 flex flex-col md:flex-row gap-8 justify-around items-start">
+    <section className="max-w-7xl mx-auto px-4 w-full mb-12 font-sans mt-8 md:mt-0">
+       <div className="bg-white rounded-3xl border border-gray-100 shadow-premium p-6 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 lg:gap-12">
           {[
             { 
-              icon: <Tags size={36} className="text-[#1e88e5] mb-4" />, 
-              title: "Cheapest Price Guarantee", 
-              desc: "Found it cheaper elsewhere? We'll match it or refund the difference." 
+              icon: <Tags size={32} className="text-primary" />, 
+              title: "Cheapest Price", 
+              desc: "Found it cheaper? We'll match or refund the difference." 
             },
             { 
-              icon: <HandCoins size={36} className="text-[#1e88e5] mb-4" />, 
-              title: "No Hidden Booking Fees", 
-              desc: "What you see is what you pay. Transparent pricing across all bookings." 
+              icon: <HandCoins size={32} className="text-primary" />, 
+              title: "No Hidden Fees", 
+              desc: "Transparent pricing. No surprises at checkout." 
             },
             { 
-              icon: <ShieldCheck size={36} className="text-[#1e88e5] mb-4" />, 
+              icon: <ShieldCheck size={32} className="text-primary" />, 
               title: "Secure & Trusted", 
-              desc: "Safe encryption prevents fraud and ensures your data is strictly protected." 
+              desc: "Elite encryption ensuring your data is protected." 
             }
           ].map((item, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center text-center">
-               {item.icon}
-               <h3 className="text-lg font-bold text-gray-800 mb-2">{item.title}</h3>
-               <p className="text-sm text-gray-500 font-medium max-w-[250px] leading-relaxed">{item.desc}</p>
+            <div key={i} className="flex flex-col items-center text-center p-4 rounded-2xl hover:bg-slate-50 transition-colors">
+               <div className="w-14 h-14 bg-primary/5 rounded-2xl flex items-center justify-center mb-6">{item.icon}</div>
+               <h3 className="text-base md:text-lg font-black text-slate-800 mb-3 uppercase tracking-tight">{item.title}</h3>
+               <p className="text-xs md:text-sm text-slate-500 font-medium max-w-[280px] leading-relaxed">{item.desc}</p>
             </div>
           ))}
        </div>

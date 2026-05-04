@@ -1,39 +1,39 @@
 import React from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const HotelSortOptions = ({ activeSort, setActiveSort }) => {
   const options = [
-    { id: 'recommended', label: 'POPULARITY', sub: 'Most preferred' },
-    { id: 'guest-rating', label: 'GUEST RATING', sub: '4.5+ score' },
-    { id: 'lowest', label: 'PRICE', sub: 'Low to High' },
-    { id: 'highest', label: 'PRICE', sub: 'High to Low' }
+    { id: 'popularity', label: 'Popularity' },
+    { id: 'price-low', label: 'Price (Low to High)' },
+    { id: 'price-high', label: 'Price (High to Low)' },
+    { id: 'rating', label: 'User Rating (Highest)' },
+    { id: 'best-rated', label: 'Lowest Price & Best Rated' }
   ];
 
   return (
-    <div className="bg-white border-b border-gray-200 mb-6 font-sans">
-      <div className="flex items-center gap-10 px-4">
-        <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest py-4">Sort By:</span>
-        <div className="flex items-center gap-12">
-          {options.map(sort => (
-            <button 
-              key={sort.id}
-              onClick={() => setActiveSort(sort.id)}
-              className={`py-3 relative group transition-all min-w-[100px] text-left ${activeSort === sort.id ? 'text-blue-600' : 'text-gray-500 hover:text-blue-600'}`}
-            >
-              <div className="flex flex-col items-start">
-                <span className={`text-[12px] font-black uppercase tracking-wide ${activeSort === sort.id ? 'text-blue-600' : 'text-gray-700'}`}>
-                  {sort.label}
-                </span>
-                <span className={`text-[10px] font-bold mt-0 ${activeSort === sort.id ? 'text-blue-400' : 'text-gray-400'}`}>
-                  {sort.sub}
-                </span>
-              </div>
-              {activeSort === sort.id && (
-                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-blue-600 rounded-t-full shadow-[0_-2px_10px_rgba(37,99,235,0.4)]"></div>
-              )}
-            </button>
-          ))}
-        </div>
+    <div className="bg-white border border-gray-100 rounded-md mb-6 font-sans relative flex items-center shadow-sm">
+      <button className="flex-shrink-0 w-10 h-[48px] flex items-center justify-center text-gray-400 hover:text-blue-600 border-r border-gray-100 transition-colors">
+        <ChevronLeft size={18} />
+      </button>
+      
+      <div className="flex-1 flex items-center overflow-x-auto scrollbar-hide">
+        {options.map((sort, index) => (
+          <button 
+            key={sort.id}
+            onClick={() => setActiveSort(sort.id)}
+            className={`flex-shrink-0 h-[48px] px-6 flex items-center text-[13px] font-bold transition-all border-r border-gray-100 last:border-r-0
+              ${activeSort === sort.id 
+                ? 'bg-[#e7f3ff] text-[#008cff]' 
+                : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            {sort.label}
+          </button>
+        ))}
       </div>
+
+      <button className="flex-shrink-0 w-10 h-[48px] flex items-center justify-center text-gray-400 hover:text-blue-600 border-l border-gray-100 transition-colors">
+        <ChevronRight size={18} />
+      </button>
     </div>
   );
 };
